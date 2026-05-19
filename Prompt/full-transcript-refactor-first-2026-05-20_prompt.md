@@ -9,7 +9,7 @@
 | 단계 | slug | 상태 | 산출물 |
 |------|------|------|--------|
 | 0 | cursorrules | ✅ 완료 | `.cursorrules` |
-| 1 | requirements-analysis | ⬜ 대기 | `docs/requirements_analysis.md` |
+| 1 | requirements-analysis | ✅ 완료 | `docs/requirements_analysis.md` |
 | 2 | code-quality | ⬜ 대기 | `docs/code_quality_report.md` |
 | 3 | clean-refactor | ⬜ 대기 | 리팩토링 diff |
 | 4 | defect-analysis | ⬜ 대기 | `docs/defect_list.md` |
@@ -45,4 +45,28 @@ Report·Prompt 3종 생성·갱신. git 미수행.
 
 ---
 
-*마지막 갱신: 2026-05-20 — 단계 0 완료*
+## 단계 1 — requirements-analysis
+
+**User (요약)**  
+시니어 C++ QA 역할로 README·`bmi.png` 기반 도메인 요구사항을 표·번호 목록으로 재정리. CSV·BMI·보정·비율·`getBmiRatio`·Activities 4·GTest 시나리오 30건 이상 → `docs/requirements_analysis.md`.
+
+**Assistant (요약)**  
+요구사항 분석 문서 생성(8섹션, TC-01~40, 부록 A/B). README vs png vs 코드 경계 이슈 명시. 다음: 2단계 코드 품질 분석.
+
+**산출물:** `docs/requirements_analysis.md`  
+**Report:** `Report/1.requirements-analysis-report-2026-05-20.md`  
+**Transcript:** `Prompt/1.requirements-analysis-transcript-2026-05-20_prompt.md`
+
+---
+
+## 단계 1 후처리 — 문서·배포
+
+**User (요약)**  
+1단계 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
+
+**Assistant (요약)**  
+Report·Prompt 3종 생성·갱신. git 커밋·푸시.
+
+---
+
+*마지막 갱신: 2026-05-20 — 단계 1 완료*
