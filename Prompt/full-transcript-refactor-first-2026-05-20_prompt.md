@@ -10,7 +10,7 @@
 |------|------|------|--------|
 | 0 | cursorrules | ✅ 완료 | `.cursorrules` |
 | 1 | requirements-analysis | ✅ 완료 | `docs/requirements_analysis.md` |
-| 2 | code-quality | ⬜ 대기 | `docs/code_quality_report.md` |
+| 2 | code-quality-report | ✅ 완료 | `docs/code_quality_report.md` |
 | 3 | clean-refactor | ⬜ 대기 | 리팩토링 diff |
 | 4 | defect-analysis | ⬜ 대기 | `docs/defect_list.md` |
 | 5 | feature-enhancement | ⬜ 대기 | 기능 diff |
@@ -69,4 +69,28 @@ Report·Prompt 3종 생성·갱신. git 커밋·푸시.
 
 ---
 
-*마지막 갱신: 2026-05-20 — 단계 1 완료*
+## 단계 2 — code-quality-report
+
+**User (요약)**  
+시니어 C++ 아키텍트·모던 C++ 리뷰어 역할로 `SHealth` SOLID·코드 스멜 정적 분석. Magic Number, 중복 분기, 결합도, 경계값 버그 후보, 1차·2차 리팩토링 우선순위 1~5 → `docs/code_quality_report.md`.
+
+**Assistant (요약)**  
+코드 품질 보고서 생성. SRP/OCP 심각 위반, `getBmiRatio` 24분기·God Method, BMI=25 미분류·0 나누기 후보, P1~P5·3·6단계 로드맵 정리. 다음: 3단계 1차 리팩토링(동작 보존).
+
+**산출물:** `docs/code_quality_report.md`  
+**Report:** `Report/2.code-quality-report-2026-05-20.md`  
+**Transcript:** `Prompt/2.code-quality-report-transcript-2026-05-20_prompt.md`
+
+---
+
+## 단계 2 후처리 — 문서·배포
+
+**User (요약)**  
+2단계 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
+
+**Assistant (요약)**  
+Report·Prompt 3종 생성·갱신. git 커밋·푸시.
+
+---
+
+*마지막 갱신: 2026-05-20 — 단계 2 완료*
