@@ -18,6 +18,7 @@
 | 6 | defect-analysis | ✅ 완료 | `docs/defect_list.md`, `loadFromCsv` 보강, 37 TC Green |
 | 7 | feature-enhancement | ✅ 완료 | SRP·신규 API·47 TC Green, `docs/feature_changelog.md` |
 | 8 | refactoring-roadmap | ✅ 완료 | `docs/refactoring_plan.md` (Phase 0~7) |
+| 8b | second-refactoring-execution | ✅ 완료 | Phase 0~7 코드·`refactor/phase-1-vector`·49 TC |
 | 9 | golden-master | ⬜ 대기 | Golden 회귀 |
 | 10 | defect-report | ⬜ 대기 | `docs/defect_report.md` |
 | 11 | architecture | ⬜ 대기 | `docs/architecture.md` |
@@ -241,4 +242,28 @@ Report·Prompt·full-transcript 생성·갱신. git 커밋·푸시.
 
 ---
 
-*마지막 갱신: 2026-05-20 — 수정 워크플로우 기준 단계 8(2차 리팩토링 로드맵·`refactoring_plan.md`) 완료*
+## 2차 리팩토링 실행 — Phase 0~7 (`refactor/phase-1-vector`)
+
+**User (요약)**  
+`docs/refactoring_plan.md` 기준 Phase 0(기준선)·1(vector)·2(BmiDomain)·4(모듈 분리)·5(istream)·6(enum·SHealthBMI)·7(kMaxCsvRecords·TC) 순차 실행 및 단계별 커밋.
+
+**Assistant (요약)**  
+고정 배열→`PersonRecord`+`vector`, `BmiDomain.h` 테이블, `CsvLoader`/`Imputation`/`Statistics` TU 분리, `istream` DIP, `BmiCategoryType` 오버로드, `kMaxCsvRecords` cap+TC. `SHealth.cpp` 파사드화. `ctest` 47→**49** Green, `SHealthBMI` baseline 유지. 브랜치 `refactor/phase-1-vector`, 태그 `phase-0-baseline`. 커밋 `9a2b211`~`18a14dd`.
+
+**산출물:** `src/main/cpp/{PersonRecord,BmiDomain,CsvLoader,Imputation,Statistics,SHealth,SHealthBMI}.*`, `CMakeLists.txt`, `docs/refactoring_plan.md`, `docs/defect_list.md`  
+**Report:** `Report/09.second-refactoring-execution-report-2026-05-20.md`  
+**Transcript:** `Prompt/09.second-refactoring-execution-transcript-2026-05-20_prompt.md`
+
+---
+
+## 2차 리팩토링 실행 후처리 — 문서·배포
+
+**User (요약)**  
+Phase 0~7 완료 후 Report / Prompt / full-transcript / git commit·push.
+
+**Assistant (요약)**  
+Report 09·Prompt 09·full-transcript 갱신. git 커밋·푸시.
+
+---
+
+*마지막 갱신: 2026-05-20 — 2차 리팩토링 Phase 0~7 실행 완료 (`refactor/phase-1-vector`, ctest 49/49)*
