@@ -82,7 +82,7 @@
     6) getBmiRatio(ageClass, type) API 계약 — 표
     7) README Activities 4 기능 개선 항목 (SRP 분리, 키 0 보정, 정상 BMI 목록, 전체 비율 등)
     8) Google Test 시나리오 번호 목록 (30건 이상 권장)
-[F] Markdown(표+번호 목록) → docs/requirements_analysis.md 저장
+[F] Markdown(표+번호 목록) → docs/requirements_analysis.md 저장  (한글 설명)
 ```
 
 **완료 기준:** `docs/requirements_analysis.md` 생성 (코드 변경 없음)
@@ -103,7 +103,7 @@
     - 데이터 로딩·보정·BMI 계산·통계 집계의 결합도
     - 경계값 버그 후보 (BMI=18.5/23/25, sum=0, ageCount=0)
     - 리팩토링 우선순위 1~5 (근거 포함)
-[F] Markdown 표 → docs/code_quality_report.md 저장
+[F] Markdown 표 → docs/code_quality_report.md 저장 (한글 설명)
 ```
 
 **완료 기준:** `docs/code_quality_report.md` 생성
@@ -127,7 +127,7 @@
     - 예외·특이 케이스 (sum=0, 전원 체중 0, 파일 미존재)
     - Fake/Fixture 데이터 전략 (소형 in-memory CSV 또는 임시 파일)
     - 커버리지 목표(90%+) 및 측정·개선 절차
-[F] docs/test_plan.md 저장
+[F] docs/test_plan.md 저장 (한글 설명)
 ```
 
 **완료 기준:** `docs/test_plan.md` 생성
@@ -151,7 +151,7 @@
        - 연령대별 비율·getBmiRatio
     2) 테스트 통과에 필요한 최소 구현만 SHealth에 추가·수정
     3) Given-When-Then 주석, EXPECT_NEAR/EXPECT_DOUBLE_EQ 적절 사용
-[F] 완성 테스트 코드 + 구현 diff. cmake --build build && ctest Green
+[F] 완성 테스트 코드 + 구현 diff. cmake --build build && ctest Green (한글 설명)
 ```
 
 **완료 기준:** `ctest` 전체 Green (`SHealthBMITest` 포함)
@@ -183,7 +183,7 @@ BMI 계산기(SHealth)에 대해 TDD를 시작하고 싶어.
     - 하드코드·매직 넘버 상수화 (18.5, 23, 25, 100/200/300/400)
     - 함수 추출 (CSV 파싱, 보정, BMI 계산, 연령대 통계)
     - 반복/중복 제거 (연령대별 if-else, getBmiRatio 분기)
-[F] 리팩토링 diff + ctest Green 유지
+[F] 리팩토링 diff + ctest Green 유지 (한글 설명)
 ```
 
 **완료 기준:** `ctest` Green + 가독성·중복 개선
@@ -213,7 +213,7 @@ BMI 계산기(SHealth)에 대해 TDD를 시작하고 싶어.
        - 버그 위치, 심각도, 최소 수정안
     B) 결함 목록 문서화
        - ID, Severity, ItemType, Steps, Expected, Actual, Root Cause, Fix Summary
-[F]
+[F] (한글 설명)
     A) 수정 diff + ctest Green 확인
     B) docs/defect_list.md (DEF-001~ 형식)
 ```
@@ -237,7 +237,7 @@ BMI 계산기(SHealth)에 대해 TDD를 시작하고 싶어.
     - Height=0 연령대 평균 보정 (weight=0과 대칭)
     - BMI 정상 범위 사용자 목록 조회
     - 전체 사용자 대비 각 BMI 범주 비율
-[F] 테스트 + 구현 + docs/feature_changelog.md (선택)
+[F] 테스트 + 구현 + docs/feature_changelog.md (선택) (한글 설명)
 ```
 
 **완료 기준:** 신규 기능별 테스트 Green
@@ -256,7 +256,7 @@ BMI 계산기(SHealth)에 대해 TDD를 시작하고 싶어.
     1) `SHealthBMI` 실행 기대 출력 캡처 (test/golden/shealth_bmi.approved.txt)
     2) Google Test로 계산 결과 vs golden 비교 (또는 getBmiRatio 일괄 검증)
     3) CMake/ctest 통합 + golden 갱신 방법 문서화
-[F] 테스트 코드 + 실행·갱신 방법 (README 섹션 또는 주석)
+[F] 테스트 코드 + 실행·갱신 방법 (README 섹션 또는 주석) (한글 설명)
 ```
 
 **완료 기준:** Golden/회귀 테스트 포함 `ctest` Green
@@ -276,7 +276,7 @@ BMI 계산기(SHealth)에 대해 TDD를 시작하고 싶어.
     - 연령대·분류 enum/struct 테이블 드리븐 설계
     - getBmiRatio 분기 → 맵 또는 계산 함수
     - Phase별: 목표 / 변경 파일 / 리스크 / 롤백 / 검증 명령
-[F] docs/refactoring_plan.md (Phase 0~N 체크리스트)
+[F] docs/refactoring_plan.md (Phase 0~N 체크리스트)  (한글 설명)
     각 Phase 완료 시: cmake --build build && ctest
 ```
 
@@ -296,7 +296,7 @@ BMI 계산기(SHealth)에 대해 TDD를 시작하고 싶어.
     2) 결함 보고서 템플릿 (재현/기대/실제/원인/수정/검증)
     3) 품질 메트릭 (통과율, 커버리지, 경계값 발견율)
     4) (선택) GitHub Issues 연동 워크플로
-[F] docs/defect_report.md 저장
+[F] docs/defect_report.md 저장  (한글 설명)
 ```
 
 **완료 기준:** `docs/defect_report.md` 생성
@@ -314,7 +314,7 @@ BMI 계산기(SHealth)에 대해 TDD를 시작하고 싶어.
 [T] 클래스 다이어그램 작성
     - SHealth, (리팩토링 후) 파서·보정·분류·통계 컴포넌트
     - 주요 public API, 테스트 Fixture 관계
-[F] Mermaid classDiagram → docs/architecture.md
+[F] Mermaid classDiagram → docs/architecture.md  (한글 설명)
 ```
 
 **완료 기준:** `docs/architecture.md` 생성
@@ -337,7 +337,7 @@ BMI 계산기(SHealth)에 대해 TDD를 시작하고 싶어.
     3) 코드 품질 Before & After
     4) AI 활용 효과·한계, TC 작성 팁
     5) 다음 레거시 BMI/헬스 데이터 프로젝트 Best Practice 5가지
-[F] docs/qa_final_report.md 저장
+[F] docs/qa_final_report.md 저장  (한글 설명)
     작성 전 ctest 재검증 후 수치 반영
 ```
 
@@ -357,7 +357,7 @@ BMI 계산기(SHealth)에 대해 TDD를 시작하고 싶어.
        - User 프롬프트 + Assistant 요약만 (대화형 형식)
     3) Prompt/full-transcript-refactor-first-YYYY-MM-DD_prompt.md 갱신
     4) git add → commit → push
-[F] 생성·갱신된 파일 경로 목록 + git 결과
+[F] 생성·갱신된 파일 경로 목록 + git 결과  (한글 설명)
 ```
 
 **슬러그 예:** `requirements-analysis`, `tdd-implementation`, `clean-refactor`, `feature-enhancement`, `qa-final-report`
