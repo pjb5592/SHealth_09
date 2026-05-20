@@ -274,6 +274,12 @@ docs/test_plan.md 기준으로 실패 테스트부터 작성한 뒤 Green까지 
 
 **완료 기준:** 실행 가능한 Phase 로드맵 문서 (당장 코드 변경은 선택, 변경 시 ctest Green)
 
+
+'''
+@docs/refactoring_plan.md 
+파일상 확인이 된 건 Check List update해줘
+'''
+
 ---
 
 ### 9. Golden Master / 회귀 테스트 (선택)
