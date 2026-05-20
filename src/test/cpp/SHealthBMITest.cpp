@@ -1,9 +1,11 @@
 #include <cmath>
+#include <cstdio>
 #include <fstream>
 #include <memory>
 #include <string>
 
 #include <gtest/gtest.h>
+#include "CsvLoader.h"
 #include "SHealth.h"
 
 namespace {
@@ -557,4 +559,29 @@ TEST_F(SHealthFixture, GetOverallBmiRatio_EmptyData_ReturnsZero) {
 TEST_F(SHealthFixture, GetOverallBmiRatio_InvalidType_ReturnsZero) {
     ASSERT_GT(LoadFixture("overall_four_categories.csv"), 0);
     EXPECT_DOUBLE_EQ(health_->getOverallBmiRatio(999), 0.0);
+}
+
+// DEF-007 / Phase 7: kMaxCsvRecords 초과 시 cap·크래시 없음
+TEST_F(SHealthFixture, CalculateBmi_ExceedsMaxRecords_CapsAtLimit) {
+    // Given: 헤더 + (kMaxCsvRecords + 1) 데이터 행
+    // When: calculateBmi 호출
+    // Then: kMaxCsvRecords건만 로드
+    const std::string path = ProjectPath("build/phase7_max_records_test.csv");
+    {
+        std::ofstream out(path);
+        ASSERT_TRUE(out.is_open());
+        out << "id,age,weight,height\n";
+        for (int i = 0; i < shealth::detail::csv::kMaxCsvRecords + 1; ++i) {
+            out << (100000 + i) << ",25,70,170\n";
+        }
+    }
+    EXPECT_EQ(health_->calculateBmi(path), shealth::detail::csv::kMaxCsvRecords);
+    std::remove(path.c_str());
+}
+
+// Phase 7: shealth.dat 로드 건수 상한 미만·기존 규모 유지
+TEST_F(SHealthFixture, CalculateBmi_ShealthDat_RecordCountWithinCap) {
+    const int count = health_->calculateBmi(ProjectPath("shealth.dat"));
+    EXPECT_GT(count, 4800);
+    EXPECT_LT(count, shealth::detail::csv::kMaxCsvRecords);
 }

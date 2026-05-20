@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "BmiDomain.h"
+#include "CsvLoader.h"
 #include "PersonRecord.h"
 
 class SHealthTestPeer;
@@ -22,7 +23,7 @@ public:
     std::vector<int> getNormalBmiUserIds() const;
 
 private:
-    static constexpr int kMaxRecords = 10000;
+    static constexpr int kMaxRecords = shealth::detail::csv::kMaxCsvRecords;
     static constexpr int kAgeCohortCount = shealth::domain::kAgeCohortCount;
     static constexpr int kBmiCategoryCount = shealth::domain::kBmiCategoryCount;
 

@@ -99,7 +99,7 @@ flowchart TB
 | **4** | `shealth::detail` **헤더 분리** | `CsvLoader`·`Imputation`·`Statistics`·`PersonRecord.h` | ✅ 완료 |
 | **5** | **istream** 로더 (DIP) | `loadFromCsv(istream&, vector&)` | ✅ 완료 |
 | **6** | 파사드·API 정리 | `BmiCategoryType` 오버로드, `SHealthBMI` 테이블 루프 | ✅ 완료 |
-| **7** | 상한·성능·문서 | `kMaxRecords` 정책, Out TC | 선택 Phase |
+| **7** | 상한·성능·문서 | `kMaxCsvRecords`·경고·TC | ✅ 완료 |
 
 **권장 순서:** 0 → 1 → 2 → 3 → (4∥5) → 6 → 7.  
 Phase 4·5는 의존성 낮으면 4 후 5 또는 5 후 4.
@@ -504,8 +504,10 @@ ctest
 
 ### 체크리스트
 
-- [ ] `shealth.dat` 로드 건수 **기존과 동일**
-- [ ] **47/47** Green (신규 TC 추가 시 N+1)
+- [x] `kMaxCsvRecords`(10000) 정책 — `CsvLoader.h` 주석·초과 시 stderr 경고 (2026-05-20)
+- [x] `shealth.dat` 로드 건수 **상한 미만** (`CalculateBmi_ShealthDat_RecordCountWithinCap`)
+- [x] DEF-007 회귀 TC — `CalculateBmi_ExceedsMaxRecords_CapsAtLimit`
+- [x] **49/49** Green
 
 ---
 
@@ -533,7 +535,7 @@ ctest
 | 4 | [x] | 47/47 | 헤더/cpp 분리 (`PersonRecord`, `CsvLoader`, `Imputation`, `Statistics`, 2026-05-20) |
 | 5 | [x] | 47/47 | `istream` 로더 (2026-05-20) |
 | 6 | [x] | 47/47 | 파사드·BMI main 루프 (2026-05-20) |
-| 7 | [ ] | 47/47+ | cap 정책·TC |
+| 7 | [x] | 49/49 | cap 정책·DEF-007 TC (2026-05-20) |
 
 ---
 
@@ -556,4 +558,4 @@ ctest
 
 ---
 
-*문서 버전: 1.4 | Phase 0~6 체크리스트 반영 | 다음: **Phase 7** (선택, `kMaxRecords` 정책)*
+*문서 버전: 1.5 | Phase 0~7 완료 | 2차 구조 개선 로드맵 종료 — 후속: Golden Master(9단계)*

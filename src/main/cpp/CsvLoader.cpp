@@ -34,6 +34,10 @@ bool loadFromCsv(std::istream& input, std::vector<PersonRecord>& records, int ma
             continue;
         }
         if (static_cast<int>(records.size()) >= maxRecords) {
+            if (maxRecords > 0) {
+                std::cerr << "Warning: CSV record limit (" << maxRecords
+                          << ") reached; remaining rows ignored." << std::endl;
+            }
             break;
         }
         if (tokens.size() < 4) {
