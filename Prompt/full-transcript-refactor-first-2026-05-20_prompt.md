@@ -11,7 +11,7 @@
 | 0 | cursorrules | ✅ 완료 | `.cursorrules` |
 | 1 | requirements-analysis | ✅ 완료 | `docs/requirements_analysis.md` |
 | 2 | code-quality-report | ✅ 완료 | `docs/code_quality_report.md` |
-| 3 | clean-refactor | ⬜ 대기 | 리팩토링 diff |
+| 3 | clean-refactor | ✅ 완료 | `src/main/cpp/SHealth.*`, `docs/refactor_baseline_output.txt` |
 | 4 | defect-analysis | ⬜ 대기 | `docs/defect_list.md` |
 | 5 | feature-enhancement | ⬜ 대기 | 기능 diff |
 | 6 | refactoring-roadmap | ⬜ 대기 | `docs/refactoring_plan.md` |
@@ -93,4 +93,28 @@ Report·Prompt 3종 생성·갱신. git 커밋·푸시.
 
 ---
 
-*마지막 갱신: 2026-05-20 — 단계 2 완료*
+## 단계 3 — clean-refactor
+
+**User (요약)**  
+모던 C++ 리팩토링 코치 역할로 Activities 2 1차 클린코드. 동작 보존: 네이밍·상수화·함수 추출·DRY. `cmake --build build` + `SHealthBMI` 출력 동일(또는 baseline 문서).
+
+**Assistant (요약)**  
+`SHealth` 리팩토링 완료. 24 멤버 → `cohortRatios_[6][4]`, `calculateBmi` 단계 분리, `getBmiRatio` 테이블 조회, `BmiCategoryType` enum. `docs/refactor_baseline_output.txt` 저장·사후 출력 일치. 빌드 성공. 결함 수정은 4단계 유보.
+
+**산출물:** `src/main/cpp/SHealth.h`, `SHealth.cpp`, `SHealthBMI.cpp`, `docs/refactor_baseline_output.txt`  
+**Report:** `Report/03.clean-refactor-report-2026-05-20.md`  
+**Transcript:** `Prompt/03.clean-refactor-transcript-2026-05-20_prompt.md`
+
+---
+
+## 단계 3 후처리 — 문서·배포
+
+**User (요약)**  
+3단계 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
+
+**Assistant (요약)**  
+Report·Prompt 3종 생성·갱신. git 커밋·푸시.
+
+---
+
+*마지막 갱신: 2026-05-20 — 단계 3 완료*
