@@ -1,5 +1,13 @@
 # Build directory
 build/
+build-coverage/
+
+# gcov / lcov
+*.gcno
+*.gcda
+coverage.info
+coverage.filtered.info
+coverage_summary.txt
 
 # Compiled object files
 *.o

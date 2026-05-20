@@ -46,6 +46,26 @@ cd build
 ctest
 ```
 
+### 코드 커버리지 (gcov / lcov, MinGW GCC)
+
+`SHEALTH_COVERAGE=ON`으로 `shealth_lib`·`SHealthBMITest`를 빌드한 뒤 `coverage` 타깃이 `ctest` → HTML 리포트를 생성한다.
+
+```bash
+cmake -B build -DSHEALTH_COVERAGE=ON
+cmake --build build
+cmake --build build --target coverage
+```
+
+| 항목 | 경로 |
+|------|------|
+| 요약 텍스트 | `build/coverage_summary.txt` (gcov 파싱, **권장**) |
+| HTML 리포트 | `build/coverage_html/index.html` (lcov 성공 시; GCC 15에서는 생략될 수 있음) |
+| 목표 (test_plan §8.1) | `shealth_lib` .cpp 합산 — 라인 ≥ 90%, 분기 ≥ 85% |
+
+요구: MinGW `gcov`, Python 3. (`lcov`/`genhtml`은 HTML용 선택).
+
+일반 개발 빌드는 `SHEALTH_COVERAGE=OFF`(기본)로 `cmake -B build` 하면 `-O0` 없이 빌드된다.
+
 ### Golden Master 회귀 (`shealth.dat` 연령대×4분류 비율)
 
 `SHealthBMI` 실행 결과와 동일한 포맷의 기대 출력을 `test/golden/shealth_bmi.approved.txt`에 보관한다.

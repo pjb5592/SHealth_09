@@ -1,6 +1,7 @@
 #include <cmath>
 #include <cstdio>
 #include <fstream>
+#include <ios>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -427,6 +428,53 @@ TEST_F(SHealthFixture, CalculateBmi_BlankLineAfterHeader_LoadsFollowingRows) {
     const double sum = health_->getBmiRatio(20, 100) + health_->getBmiRatio(20, 200) +
                        health_->getBmiRatio(20, 300) + health_->getBmiRatio(20, 400);
     EXPECT_NEAR(sum, 100.0, kRatioSumEpsilon);
+}
+
+// TP-P3-19: CSV 열 부족(<4) — loadFromCsv false (DEF-008 보완)
+TEST_F(SHealthFixture, CalculateBmi_TooFewColumns_ReturnsZero) {
+    // Given: 데이터 행에 필드 3개만 있는 CSV
+    // When: calculateBmi 호출
+    // Then: 0 반환
+    EXPECT_EQ(LoadFixture("too_few_columns.csv"), 0);
+}
+
+// CsvLoader: failbit istream → loadFromCsv false
+TEST(CsvLoaderTest, LoadFromStream_FailBit_ReturnsFalse) {
+    std::istringstream input;
+    input.setstate(std::ios::failbit);
+    std::vector<PersonRecord> records;
+    EXPECT_FALSE(shealth::detail::csv::loadFromCsv(input, records, 100));
+    EXPECT_TRUE(records.empty());
+}
+
+// CsvLoader: maxRecords=0 → 데이터 행 적재 없이 true (상한 0 분기)
+TEST(CsvLoaderTest, LoadFromStream_MaxRecordsZero_LoadsNoRows) {
+    std::istringstream input("id,age,weight,height\n1,25,70,170\n");
+    std::vector<PersonRecord> records;
+    EXPECT_TRUE(shealth::detail::csv::loadFromCsv(input, records, 0));
+    EXPECT_TRUE(records.empty());
+}
+
+// CsvLoader: split 다중 토큰
+TEST(CsvLoaderTest, Split_CommaSeparated_ReturnsFourTokens) {
+    const std::vector<std::string> tokens = shealth::detail::csv::split("1,25,70.5,170.2", ',');
+    ASSERT_EQ(tokens.size(), 4u);
+    EXPECT_EQ(tokens[0], "1");
+    EXPECT_EQ(tokens[3], "170.2");
+}
+
+// SHealthBmiReport: 미집계 상태 리포트(0%) — Golden 외 직접 호출
+TEST_F(SHealthFixture, Report_Format_WithoutCalculateBmi_ReturnsZeroLines) {
+    const std::string report = shealth::report::formatCohortBmiRatioReport(*health_);
+    ASSERT_FALSE(report.empty());
+    EXPECT_NE(report.find("20 - underweight = 0.000000"), std::string::npos);
+}
+
+TEST_F(SHealthFixture, Report_Format_AfterFixture_MatchesGetBmiRatio) {
+    ASSERT_EQ(LoadFixture("cohort20_four_categories.csv"), 4);
+    const std::string report = shealth::report::formatCohortBmiRatioReport(*health_);
+    EXPECT_NE(report.find("20 - underweight = 25.000000"), std::string::npos);
+    EXPECT_NEAR(health_->getBmiRatio(20, 100), 25.0, kRatioEpsilon);
 }
 
 // TP-P3-17: 잘못된 CSV 숫자 필드 — calculateBmi 0 반환 (DEF-008)

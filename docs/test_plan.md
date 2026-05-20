@@ -334,37 +334,47 @@ protected:
 
 | 대상 | 라인 커버리지 | 분기 커버리지 | 비고 |
 |------|---------------|---------------|------|
-| `SHealth.cpp` | **≥ 90%** | **≥ 85%** | 5단계 완료 시 |
-| `SHealth.h` (inline 없음) | — | — | 선언만 |
+| **`shealth_lib` (.cpp 합산)** | **≥ 90%** | **≥ 85%** | 2차 모듈 분리 후 집계 기준 |
+| `SHealth.cpp` (단일 TU) | ≥ 90% | ≥ 85% | 파사드·도메인 위임 포함 |
+| `BmiDomain.h` | — | — | 인라인; `SHealth.cpp` 등 TU에 편입 측정 |
 | **제외** | `SHealthBMI.cpp`, gtest, FetchContent | | |
+
+**실측 스냅샷 (2026-05-20, `build/coverage_summary.txt`)**
+
+| 파일 | 라인 | 분기 |
+|------|------|------|
+| `SHealth.cpp` | 97.1% (66/68) | 100% (25/25) |
+| `CsvLoader.cpp` | 100% (45/45) | 97.8% (45/46) |
+| `Imputation.cpp` | 100% (29/29) | 100% (16/16) |
+| `Statistics.cpp` | 100% (37/37) | 91.3% (21/23) |
+| `SHealthBmiReport.cpp` | 100% (16/16) | 100% (11/11) |
+| **.cpp 합산** | **99.0% (193/195)** | **97.5% (118/121)** ✅ |
+
+> 분기 %는 gcov `(throw)` STL 예외 프로브 엣지를 **제외**한 제품 분기만 집계 (`cmake/SummarizeGcov.py`).
 
 ### 8.2 측정 절차 (GCC/MinGW 예시)
 
-1. **CMake 옵션 추가 (5단계)**
+1. **CMake** — `CMakeLists.txt`에 `option(SHEALTH_COVERAGE …)` 및 `coverage` 커스텀 타깃(구현 완료).
 
-```cmake
-option(SHEALTH_COVERAGE "Enable coverage" OFF)
-if(SHEALTH_COVERAGE)
-  target_compile_options(shealth_lib PRIVATE --coverage -O0 -g)
-  target_link_options(shealth_lib PRIVATE --coverage)
-endif()
-```
-
-2. **빌드·실행**
+2. **빌드·리포트 (MinGW GCC)**
 
 ```bash
 cmake -B build -DSHEALTH_COVERAGE=ON
 cmake --build build
-cd build && ctest
+cmake --build build --target coverage
 ```
 
-3. **리포트**
+| 산출 | 경로 |
+|------|------|
+| 요약 | `build/coverage_summary.txt` |
+| HTML (lcov 성공 시) | `build/coverage_html/index.html` |
+
+> GCC 15 gcov JSON 형식은 lcov 1.15와 호환되지 않을 수 있음. 이 경우 **`cmake/SummarizeGcov.py`** 가 `.gcov`를 파싱해 §8.1 표를 생성한다.
+
+3. **수동 gcov (선택)**
 
 ```bash
-gcov -o build/CMakeFiles/shealth_lib.dir/src/main/cpp build/*.gcda
-lcov --capture --directory build --output-file coverage.info
-lcov --remove coverage.info '/usr/*' '*gtest*' --output-file coverage.filtered.info
-genhtml coverage.filtered.info --output-directory build/coverage_html
+gcov -b build/CMakeFiles/shealth_lib.dir/src/main/cpp/SHealth.cpp.gcno
 ```
 
 4. **미커버 라인** — `build/coverage_html`에서 `classifyBmiCategory` default `-1`, `loadFromCsv` 실패 분기, `typeToCategoryIndex` default 등을 P2/P3 TC로 보강.

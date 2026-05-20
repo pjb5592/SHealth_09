@@ -178,19 +178,18 @@ stateDiagram-v2
 
 | 대상 | 라인 | 분기 | 비고 |
 |------|------|------|------|
-| `SHealth.cpp` | **≥ 90%** | **≥ 85%** | `test_plan.md` §8.1 목표 |
-| 측정 절차 | — | — | CMake `-DSHEALTH_COVERAGE=ON` → `ctest` → `lcov` / `genhtml` |
+| `shealth_lib` .cpp 합산 | **99.0%** (193/195) | **97.5%** (118/121) | `build/coverage_summary.txt` (2026-05-20, throw 제외) |
+| 목표 (`test_plan.md` §8.1) | ≥ 90% | ≥ 85% | **라인·분기 ✅** |
 
-**갱신 방법 (요약)**
+**갱신 방법**
 
 ```bash
 cmake -B build -DSHEALTH_COVERAGE=ON
-cmake --build build
-cd build && ctest
-# gcov / lcov — test_plan.md §8.2 전체 명령 참조
+cmake --build build --target coverage
+# → build/coverage_summary.txt
 ```
 
-> 12단계 `qa_final_report.md` 작성 전 **반드시** 최신 `ctest`·lcov 수치를 재측정해 본 절 스냅샷을 갱신한다.
+> `cmake/SummarizeGcov.py` — GCC 15 gcov와 lcov 비호환 시 공식 요약 경로.
 
 ### 4.4 6단계 정적 분석 vs 5단계 TC 발견율
 

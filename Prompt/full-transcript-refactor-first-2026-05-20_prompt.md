@@ -22,7 +22,7 @@
 | 9 | golden-master | ✅ 완료 | `test/golden/`, `SHealthBmiReport`, 50 TC Green |
 | 10 | defect-report | ✅ 완료 | `docs/defect_report.md` |
 | 11 | architecture | ✅ 완료 | `docs/architecture.md` |
-| 12 | qa-final-report | ⬜ 대기 | `docs/qa_final_report.md` |
+| 12 | qa-final-report | ✅ 완료 | `docs/qa_final_report.md`, coverage 56 TC |
 
 ---
 
@@ -338,4 +338,54 @@ Report 12·Prompt 12·full-transcript 갱신. `docs/architecture.md` 포함 git 
 
 ---
 
-*마지막 갱신: 2026-05-20 — 설계 다이어그램 완료 (워크플로우 11, ctest 50/50, `feature`)*
+## 단계 12 — qa-final-report
+
+**User (요약)**  
+QA 리드 역할로 0~11단계 산출물·ctest 기반 종합 보고. Before/After, 테스트·커버리지, 결함 패턴, AI 회고, Best Practice → `docs/qa_final_report.md`. 작성 전 ctest 재검증.
+
+**Assistant (요약)**  
+`docs/qa_final_report.md` v1.0 작성. `ctest` 50/50 Green. 커버리지 미측정 명시.
+
+**산출물:** `docs/qa_final_report.md`  
+**Report:** (후처리 예정)
+
+---
+
+## 단계 12b — coverage-infrastructure
+
+**User (요약)**  
+커버리지 측정 추가.
+
+**Assistant (요약)**  
+`SHEALTH_COVERAGE`, `coverage` 타깃, `SummarizeGcov.py`. README·test_plan §8 갱신.
+
+**산출물:** `CMakeLists.txt`, `cmake/GenerateCoverage.cmake`, `cmake/SummarizeGcov.py`
+
+---
+
+## 단계 12c — coverage-tc-boost
+
+**User (요약)**  
+분기 커버리지 보강 진행.
+
+**Assistant (요약)**  
+TC 6건 추가(56 total). throw 프로브 제외 집계. **99.0%** 라인 / **97.5%** 분기 PASS. `qa_final_report`·`defect_report` 갱신.
+
+**산출물:** `SHealthBMITest.cpp`, `too_few_columns.csv`
+
+---
+
+## 단계 12 후처리 — 문서·배포
+
+**User (요약)**  
+12단계(QA 종합) 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
+
+**Assistant (요약)**  
+Report 13·Prompt 13·full-transcript 갱신. QA·커버리지 산출물 git commit·push. `ctest` 56/56, coverage 목표 달성.
+
+**Report:** `Report/13.qa-final-report-report-2026-05-20.md`  
+**Transcript:** `Prompt/13.qa-final-report-transcript-2026-05-20_prompt.md`
+
+---
+
+*마지막 갱신: 2026-05-20 — QA 종합·커버리지 완료 (워크플로우 12, ctest 56/56, `feature`)*
