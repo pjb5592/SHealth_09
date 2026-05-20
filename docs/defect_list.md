@@ -5,7 +5,7 @@
 | 문서 목적 | 요구사항·정적 분석·ctest·`SHealthBMI` 출력 대비 결함 식별·수정·회귀 TC 매핑 |
 | 기준 문서 | `README.md`, `docs/requirements_analysis.md`, `docs/code_quality_report.md` |
 | 분석 대상 | `src/main/cpp/SHealth.h`, `SHealth.cpp` |
-| 검증 | `cmake --build build && ctest` (37/37 Green), `SHealthBMI` ↔ `docs/refactor_baseline_output.txt` 일치 |
+| 검증 | `cmake --build build && ctest` (47/47 Green), `SHealthBMI` ↔ `docs/refactor_baseline_output.txt` 일치 |
 | 워크플로우 | **4단계** (결함 분석·수정) |
 
 ---
@@ -14,8 +14,8 @@
 
 | 상태 | 건수 | ID |
 |------|------|-----|
-| Fixed (5단계·4단계) | 6 | DEF-001 ~ DEF-004, DEF-006 ~ DEF-008 |
-| Deferred (7단계) | 1 | DEF-005 |
+| Fixed (5단계·4단계) | 7 | DEF-001 ~ DEF-008 |
+| Deferred | 0 | — |
 
 ---
 
@@ -155,7 +155,7 @@
 |------|------|
 | **Severity** | Medium |
 | **ItemType** | Functional |
-| **Status** | Deferred (7단계, README Activities 4 F-03) |
+| **Status** | Fixed (5단계, README Activities 4 F-03) |
 
 **Steps**
 
@@ -173,11 +173,11 @@
 
 - `imputeMissingWeights`만 구현, height 대칭 보정·`computeBmi` 방어 없음.
 
-**Fix Summary (예정)**
+**Fix Summary**
 
-- 7단계: `imputeMissingHeights` 추가, 체중 보정 후 키 보정 → BMI.
+- `imputeMissingHeights()` 추가 (`shealth::detail::impute::fillHeightZeros`), 파이프라인: 체중 보정 → 키 보정 → BMI.
 
-**재발 방지 TC (예약):** TP-P1-07, TP-P1-08, TP-P0-06 (`GTEST_SKIP` 또는 7단계 Green)
+**재발 방지 TC:** TP-P1-07, TP-P1-08, TP-P0-06
 
 ---
 
@@ -288,7 +288,7 @@
 | 연령 [20,30) 등 | 하한 포함·상한 미포함 | `isInAgeCohort` | TP-P3-01~05 Green |
 | weight=0 | 연령대 평균 | `imputeMissingWeights` | DEF-003 Fixed |
 | sum=0 | 0% | `computeAgeCohortRatios` | DEF-002 Fixed |
-| height=0 | 7단계 보정 | 미구현 | DEF-005 Deferred |
+| height=0 | 연령대 평균 | `imputeMissingHeights` | DEF-005 Fixed |
 
 ---
 
@@ -300,11 +300,11 @@
 | DEF-002 | TP-P3-10, EX-01 | P3 | Green |
 | DEF-003 | TP-P1-04, EX-02 | P1 | Green |
 | DEF-004 | EX-06 | P3 | Green |
-| DEF-005 | TP-P1-07, TP-P1-08, TP-P0-06 | P1 | Deferred |
+| DEF-005 | TP-P1-07, TP-P1-08, TP-P0-06 | P1 | Green |
 | DEF-006 | TP-P3-18 | P3 | Green |
 | DEF-007 | (TC 예약, Out) | Out | Fixed |
 | DEF-008 | TP-P3-17 | P3 | Green |
 
 ---
 
-*문서 버전: 1.0 | 워크플로우 4단계 | 다음: 7단계 height 보정(DEF-005), `refactoring_plan.md`*
+*문서 버전: 1.1 | 워크플로우 5단계(Activities 4) | 다음: `refactoring_plan.md` (6단계)*

@@ -16,7 +16,7 @@
 | 4 | test-plan | ✅ 완료 | `docs/test_plan.md` |
 | 5 | tdd-implementation | ✅ 완료 | `SHealthBMITest` 35 TC Green, `src/test/fixtures/` |
 | 6 | defect-analysis | ✅ 완료 | `docs/defect_list.md`, `loadFromCsv` 보강, 37 TC Green |
-| 7 | feature-enhancement | ⬜ 대기 | 기능 diff |
+| 7 | feature-enhancement | ✅ 완료 | SRP·신규 API·47 TC Green, `docs/feature_changelog.md` |
 | 8 | refactoring-roadmap | ⬜ 대기 | `docs/refactoring_plan.md` |
 | 9 | golden-master | ⬜ 대기 | Golden 회귀 |
 | 10 | defect-report | ⬜ 대기 | `docs/defect_report.md` |
@@ -193,4 +193,28 @@ Report·Prompt·full-transcript 생성·갱신. git 커밋·푸시.
 
 ---
 
-*마지막 갱신: 2026-05-20 — 수정 워크플로우 기준 단계 6(결함 분석·수정) 완료*
+## 단계 7 — feature-enhancement
+
+**User (요약)**  
+시니어 C++ 개발자 역할로 README Activities 4. TDD Green(37 TC) 유지하며 SRP 분리, height=0 보정, 정상 BMI ID 목록, 전체 범주 비율 API 및 신규 TC.
+
+**Assistant (요약)**  
+`shealth::detail` namespace(csv/impute/bmi/stats) 추출. `ids[]`·`imputeMissingHeights`·`getNormalBmiUserIds`·`getOverallBmiRatio` 구현. 픽스처 6·테스트 10건 추가. DEF-005 Fixed. `ctest` 47/47 Green, baseline TC 유지. `docs/feature_changelog.md`·README Activities 4 완료.
+
+**산출물:** `SHealth.h/cpp`, `SHealthBMITest.cpp`, `src/test/fixtures/` 6종, `docs/feature_changelog.md`, `docs/defect_list.md`, `README.md`  
+**Report:** `Report/07.feature-enhancement-report-2026-05-20.md`  
+**Transcript:** `Prompt/07.feature-enhancement-transcript-2026-05-20_prompt.md`
+
+---
+
+## 단계 7 후처리 — 문서·배포
+
+**User (요약)**  
+7단계 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
+
+**Assistant (요약)**  
+Report·Prompt·full-transcript 생성·갱신. git 커밋·푸시.
+
+---
+
+*마지막 갱신: 2026-05-20 — 수정 워크플로우 기준 단계 7(기능 개선·Activities 4) 완료*

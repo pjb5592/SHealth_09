@@ -36,6 +36,10 @@ public:
 
     static double WeightAt(const SHealth& health, int index) { return health.weights[index]; }
 
+    static double HeightAt(const SHealth& health, int index) { return health.heights[index]; }
+
+    static int IdAt(const SHealth& health, int index) { return health.ids[index]; }
+
     static double BmiAt(const SHealth& health, int index) { return health.bmis[index]; }
 };
 
@@ -435,4 +439,114 @@ TEST_F(SHealthFixture, GetBmiRatio_ShealthDat_MatchesBaseline) {
         EXPECT_NEAR(health_->getBmiRatio(row.ageClass, 400), row.obese, kRatioEpsilon)
             << "ageClass=" << row.ageClass << " obesity";
     }
+}
+
+// --- P1: height=0 연령대 평균 보정 ---
+
+// TP-P1-07: 40대 단일 height 0 → 동일 연령대 평균(170) 대체
+TEST_F(SHealthFixture, ImputeHeight_SingleZeroIn40s_ReplacesWith170) {
+    // Given: 40대 170cm 1명과 키 0 1명
+    // When: calculateBmi로 보정하면
+    // Then: 0 레코드 키가 170
+    ASSERT_EQ(LoadFixture("height0_single_40s.csv"), 2);
+    EXPECT_DOUBLE_EQ(SHealthTestPeer::HeightAt(*health_, 1), 170.0);
+}
+
+// TP-P1-08: 연령대 전원 height=0 → 보정 스킵·0 나누기 없음
+TEST_F(SHealthFixture, ImputeHeight_AllZeroInCohort_LeavesZeroNoCrash) {
+    // Given: 40대 전원 키 0
+    // When: 보정하면
+    // Then: 0 나누기 없이 0 유지
+    ASSERT_EQ(LoadFixture("height0_all_zero_40s.csv"), 2);
+    EXPECT_DOUBLE_EQ(SHealthTestPeer::HeightAt(*health_, 0), 0.0);
+    EXPECT_DOUBLE_EQ(SHealthTestPeer::HeightAt(*health_, 1), 0.0);
+}
+
+// TP-P0-06: height=0 보정 후 유한 BMI
+TEST_F(SHealthFixture, CalculateBmi_HeightZeroAfterImpute_ReturnsFiniteBmi) {
+    // Given: 40대 height 0 1건
+    // When: calculateBmi 실행
+    // Then: 보정 후 유한 BMI
+    ASSERT_EQ(LoadFixture("height0_single_40s.csv"), 2);
+    const double bmi = SHealthTestPeer::BmiAt(*health_, 1);
+    EXPECT_TRUE(std::isfinite(bmi));
+    EXPECT_GT(bmi, 0.0);
+}
+
+// --- F-04: 정상 BMI 사용자 목록 ---
+
+// TP-F04-01: 혼합 ID → 정상만 포함
+TEST_F(SHealthFixture, GetNormalBmiUserIds_Mixed_ReturnsNormalOnly) {
+    // Given: ID 1·3 정상, 2 저체중
+    // When: getNormalBmiUserIds 호출
+    // Then: {1, 3}
+    ASSERT_EQ(LoadFixture("normal_users_mixed.csv"), 3);
+    const std::vector<int> ids = health_->getNormalBmiUserIds();
+    ASSERT_EQ(ids.size(), 2u);
+    EXPECT_EQ(ids[0], 1);
+    EXPECT_EQ(ids[1], 3);
+}
+
+// TP-F04-02: 전원 비만 → 빈 목록
+TEST_F(SHealthFixture, GetNormalBmiUserIds_AllObese_ReturnsEmpty) {
+    // Given: 전원 BMI≥25
+    // When: getNormalBmiUserIds 호출
+    // Then: 빈 목록
+    ASSERT_EQ(LoadFixture("normal_users_all_obese.csv"), 3);
+    EXPECT_TRUE(health_->getNormalBmiUserIds().empty());
+}
+
+// TP-F04-03: 경계 18.5·23.0 제외
+TEST_F(SHealthFixture, GetNormalBmiUserIds_Boundaries_ExcludesEdgeBmis) {
+    // Given: 18.5·23.0 경계 및 정상 구간 ID
+    // When: getNormalBmiUserIds 호출
+    // Then: 정상 구간 ID만 (10, 12)
+    ASSERT_EQ(LoadFixture("normal_users_boundaries.csv"), 4);
+    const std::vector<int> ids = health_->getNormalBmiUserIds();
+    ASSERT_EQ(ids.size(), 2u);
+    EXPECT_EQ(ids[0], 10);
+    EXPECT_EQ(ids[1], 12);
+}
+
+// TP-F04: calculateBmi 미호출 → 빈 목록
+TEST_F(SHealthFixture, GetNormalBmiUserIds_WithoutCalculateBmi_ReturnsEmpty) {
+    // Given: calculateBmi 미호출
+    // When: getNormalBmiUserIds 조회
+    // Then: 빈 목록
+    EXPECT_TRUE(health_->getNormalBmiUserIds().empty());
+}
+
+// --- F-05: 전체 사용자 BMI 범주 비율 ---
+
+// TP-F05-01: 4범주 각 25%
+TEST_F(SHealthFixture, GetOverallBmiRatio_FourCategoriesEach25Percent) {
+    // Given: 4명 각 BMI 범주 1명
+    // When: getOverallBmiRatio 조회
+    // Then: 각 25%, 합 ≈ 100%
+    ASSERT_EQ(LoadFixture("overall_four_categories.csv"), 4);
+    const double under = health_->getOverallBmiRatio(100);
+    const double normal = health_->getOverallBmiRatio(200);
+    const double over = health_->getOverallBmiRatio(300);
+    const double obese = health_->getOverallBmiRatio(400);
+    EXPECT_NEAR(under, 25.0, kRatioEpsilon);
+    EXPECT_NEAR(normal, 25.0, kRatioEpsilon);
+    EXPECT_NEAR(over, 25.0, kRatioEpsilon);
+    EXPECT_NEAR(obese, 25.0, kRatioEpsilon);
+    EXPECT_NEAR(under + normal + over + obese, 100.0, kRatioSumEpsilon);
+}
+
+// TP-F05-02: count=0 → 0%
+TEST_F(SHealthFixture, GetOverallBmiRatio_EmptyData_ReturnsZero) {
+    // Given: 헤더만 CSV
+    // When: 전체 비율 조회
+    // Then: 0.0
+    EXPECT_EQ(LoadFixture("header_only.csv"), 0);
+    EXPECT_DOUBLE_EQ(health_->getOverallBmiRatio(100), 0.0);
+    EXPECT_DOUBLE_EQ(health_->getOverallBmiRatio(200), 0.0);
+}
+
+// TP-F05: 잘못된 type → 0.0
+TEST_F(SHealthFixture, GetOverallBmiRatio_InvalidType_ReturnsZero) {
+    ASSERT_GT(LoadFixture("overall_four_categories.csv"), 0);
+    EXPECT_DOUBLE_EQ(health_->getOverallBmiRatio(999), 0.0);
 }

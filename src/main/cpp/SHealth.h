@@ -17,7 +17,9 @@ public:
     };
 
     int calculateBmi(const std::string& filename);
-    double getBmiRatio(int ageClass, int type);
+    double getBmiRatio(int ageClass, int type) const;
+    double getOverallBmiRatio(int type) const;
+    std::vector<int> getNormalBmiUserIds() const;
 
 private:
     static constexpr int kMaxRecords = 10000;
@@ -45,17 +47,21 @@ private:
     };
 
     int count = 0;
+    int ids[kMaxRecords];
     int ages[kMaxRecords];
     double heights[kMaxRecords];
     double weights[kMaxRecords];
     double bmis[kMaxRecords];
 
     std::array<std::array<double, kBmiCategoryCount>, kAgeCohortCount> cohortRatios_{};
+    std::array<double, kBmiCategoryCount> overallRatios_{};
 
     bool loadFromCsv(const std::string& filename);
     void imputeMissingWeights();
+    void imputeMissingHeights();
     void computeAllBmi();
     void computeAgeCohortRatios();
+    void computeOverallRatios();
 
     static bool isInAgeCohort(int age, int ageClass);
     static int ageClassToCohortIndex(int ageClass);
