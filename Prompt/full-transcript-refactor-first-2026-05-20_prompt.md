@@ -17,7 +17,7 @@
 | 5 | tdd-implementation | ✅ 완료 | `SHealthBMITest` 35 TC Green, `src/test/fixtures/` |
 | 6 | defect-analysis | ✅ 완료 | `docs/defect_list.md`, `loadFromCsv` 보강, 37 TC Green |
 | 7 | feature-enhancement | ✅ 완료 | SRP·신규 API·47 TC Green, `docs/feature_changelog.md` |
-| 8 | refactoring-roadmap | ⬜ 대기 | `docs/refactoring_plan.md` |
+| 8 | refactoring-roadmap | ✅ 완료 | `docs/refactoring_plan.md` (Phase 0~7) |
 | 9 | golden-master | ⬜ 대기 | Golden 회귀 |
 | 10 | defect-report | ⬜ 대기 | `docs/defect_report.md` |
 | 11 | architecture | ⬜ 대기 | `docs/architecture.md` |
@@ -217,4 +217,28 @@ Report·Prompt·full-transcript 생성·갱신. git 커밋·푸시.
 
 ---
 
-*마지막 갱신: 2026-05-20 — 수정 워크플로우 기준 단계 7(기능 개선·Activities 4) 완료*
+## 단계 8 — refactoring-roadmap
+
+**User (요약)**  
+모던 C++ 리팩토링 코치 역할로 1차·TDD·기능 개선 후 기준선에서 2차 구조 로드맵 작성. 고정 배열→STL, 테이블 드리븐, `getBmiRatio` 조회 단순화, Phase별 목표·파일·리스크·롤백·검증, Phase마다 ctest Green → `docs/refactoring_plan.md`.
+
+**Assistant (요약)**  
+`docs/refactoring_plan.md` 생성(Phase 0~7). 현행: `getBmiRatio` 24분기 제거·`cohortRatios_` 완료, 병렬 `kMaxRecords` 배열·`detail` 단일 cpp가 2차 대상. `code_quality_report` 6-x 매핑·API 계약 명시. 코드 변경 없음. `ctest` 47/47 확인.
+
+**산출물:** `docs/refactoring_plan.md`  
+**Report:** `Report/08.refactoring-roadmap-report-2026-05-20.md`  
+**Transcript:** `Prompt/08.refactoring-roadmap-transcript-2026-05-20_prompt.md`
+
+---
+
+## 단계 8 후처리 — 문서·배포
+
+**User (요약)**  
+8단계(6단계 로드맵) 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
+
+**Assistant (요약)**  
+Report·Prompt·full-transcript 생성·갱신. git 커밋·푸시.
+
+---
+
+*마지막 갱신: 2026-05-20 — 수정 워크플로우 기준 단계 8(2차 리팩토링 로드맵·`refactoring_plan.md`) 완료*
