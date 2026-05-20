@@ -206,10 +206,10 @@ ctest -R "CalculateBmi|GetBmiRatio|GetOverall|GetNormal|Impute"
 
 ### 체크리스트
 
-- [ ] `kMaxRecords` 배열 멤버 **0개**
-- [ ] `records_`만으로 load → impute → BMI → 집계 파이프라인 동작
-- [ ] **47/47** Green
-- [ ] (선택) `SHealthBMI` 출력 = baseline
+- [x] `kMaxRecords` 배열 멤버 **0개** (2026-05-20)
+- [x] `records_`만으로 load → impute → BMI → 집계 파이프라인 동작
+- [x] **47/47** Green
+- [x] `SHealthBMI` 출력 = baseline
 
 ---
 
@@ -525,7 +525,7 @@ ctest
 | Phase | 완료 [ ] | Green | 핵심 산출 |
 |-------|----------|-------|-----------|
 | 0 | [x] | 47/47 | baseline·브랜치·태그 `phase-0-baseline` (2026-05-20) |
-| 1 | [ ] | 47/47 | `vector<PersonRecord>` |
+| 1 | [x] | 47/47 | `vector<PersonRecord>` (2026-05-20) |
 | 2 | [ ] | 47/47 | cohort/category 테이블 |
 | 3 | [ ] | 47/47 | type lookup 테이블 |
 | 4 | [ ] | 47/47 | 헤더/cpp 분리 |

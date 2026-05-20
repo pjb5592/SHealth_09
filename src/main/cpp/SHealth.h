@@ -6,6 +6,14 @@
 
 class SHealthTestPeer;
 
+struct PersonRecord {
+    int id = 0;
+    int age = 0;
+    double weight = 0.0;
+    double height = 0.0;
+    double bmi = 0.0;
+};
+
 class SHealth {
     friend class SHealthTestPeer;
 public:
@@ -46,12 +54,7 @@ private:
         Obesity = 3,
     };
 
-    int count = 0;
-    int ids[kMaxRecords];
-    int ages[kMaxRecords];
-    double heights[kMaxRecords];
-    double weights[kMaxRecords];
-    double bmis[kMaxRecords];
+    std::vector<PersonRecord> records_;
 
     std::array<std::array<double, kBmiCategoryCount>, kAgeCohortCount> cohortRatios_{};
     std::array<double, kBmiCategoryCount> overallRatios_{};

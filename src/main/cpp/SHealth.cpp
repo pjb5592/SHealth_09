@@ -88,13 +88,15 @@ std::vector<std::string> split(const std::string& line, char delimiter) {
     return tokens;
 }
 
-bool loadFromCsv(const std::string& filename, int& count, int* ids, int* ages, double* weights,
-                 double* heights, int maxRecords) {
+bool loadFromCsv(const std::string& filename, std::vector<PersonRecord>& records, int maxRecords) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Failed to open file: " << filename << std::endl;
         return false;
     }
+
+    records.clear();
+    records.reserve(static_cast<std::size_t>(maxRecords));
 
     std::string line;
     std::getline(file, line);
@@ -103,21 +105,22 @@ bool loadFromCsv(const std::string& filename, int& count, int* ids, int* ages, d
         if (tokens.empty()) {
             continue;
         }
-        if (count >= maxRecords) {
+        if (static_cast<int>(records.size()) >= maxRecords) {
             break;
         }
         if (tokens.size() < 4) {
             return false;
         }
         try {
-            ids[count] = std::stoi(tokens[0]);
-            ages[count] = std::stoi(tokens[1]);
-            weights[count] = std::stod(tokens[2]);
-            heights[count] = std::stod(tokens[3]);
+            PersonRecord record;
+            record.id = std::stoi(tokens[0]);
+            record.age = std::stoi(tokens[1]);
+            record.weight = std::stod(tokens[2]);
+            record.height = std::stod(tokens[3]);
+            records.push_back(record);
         } catch (const std::exception&) {
             return false;
         }
-        count++;
     }
     return true;
 }
@@ -126,31 +129,35 @@ bool loadFromCsv(const std::string& filename, int& count, int* ids, int* ages, d
 
 namespace impute {
 
-void fillCohortAverage(int count, const int* ages, double* values, bool (*isMissing)(double)) {
+void fillCohortAverage(std::vector<PersonRecord>& records,
+                       double PersonRecord::*field,
+                       bool (*isMissing)(double)) {
+    const std::size_t count = records.size();
     for (int ageClass = bmi::kAgeClassMin; ageClass <= bmi::kAgeClassMax;
          ageClass += bmi::kAgeClassStep) {
         double sum = 0;
         int validCount = 0;
-        for (int i = 0; i < count; i++) {
-            if (!bmi::isInAgeCohort(ages[i], ageClass)) {
+        for (std::size_t i = 0; i < count; i++) {
+            if (!bmi::isInAgeCohort(records[i].age, ageClass)) {
                 continue;
             }
-            if (isMissing(values[i])) {
+            const double value = records[i].*field;
+            if (isMissing(value)) {
                 continue;
             }
-            sum += values[i];
+            sum += value;
             validCount++;
         }
         if (validCount == 0) {
             continue;
         }
         const double average = sum / validCount;
-        for (int i = 0; i < count; i++) {
-            if (!bmi::isInAgeCohort(ages[i], ageClass)) {
+        for (std::size_t i = 0; i < count; i++) {
+            if (!bmi::isInAgeCohort(records[i].age, ageClass)) {
                 continue;
             }
-            if (isMissing(values[i])) {
-                values[i] = average;
+            if (isMissing(records[i].*field)) {
+                records[i].*field = average;
             }
         }
     }
@@ -158,12 +165,12 @@ void fillCohortAverage(int count, const int* ages, double* values, bool (*isMiss
 
 bool isZero(double value) { return value == 0.0; }
 
-void fillWeightZeros(int count, const int* ages, double* weights) {
-    fillCohortAverage(count, ages, weights, isZero);
+void fillWeightZeros(std::vector<PersonRecord>& records) {
+    fillCohortAverage(records, &PersonRecord::weight, isZero);
 }
 
-void fillHeightZeros(int count, const int* ages, double* heights) {
-    fillCohortAverage(count, ages, heights, isZero);
+void fillHeightZeros(std::vector<PersonRecord>& records) {
+    fillCohortAverage(records, &PersonRecord::height, isZero);
 }
 
 }  // namespace impute
@@ -173,18 +180,19 @@ namespace stats {
 constexpr double kPercentScale = 100.0;
 
 void computeAgeCohortRatios(
-    int count, const int* ages, const double* bmis,
+    const std::vector<PersonRecord>& records,
     std::array<std::array<double, bmi::kBmiCategoryCount>, bmi::kAgeCohortCount>& cohortRatios) {
+    const std::size_t count = records.size();
     for (int ageClass = bmi::kAgeClassMin; ageClass <= bmi::kAgeClassMax;
          ageClass += bmi::kAgeClassStep) {
         int categoryCounts[bmi::kBmiCategoryCount] = {0, 0, 0, 0};
         int sum = 0;
-        for (int i = 0; i < count; i++) {
-            if (!bmi::isInAgeCohort(ages[i], ageClass)) {
+        for (std::size_t i = 0; i < count; i++) {
+            if (!bmi::isInAgeCohort(records[i].age, ageClass)) {
                 continue;
             }
             sum++;
-            const int category = bmi::classifyBmiCategory(bmis[i]);
+            const int category = bmi::classifyBmiCategory(records[i].bmi);
             if (category >= 0) {
                 categoryCounts[category]++;
             }
@@ -203,22 +211,24 @@ void computeAgeCohortRatios(
     }
 }
 
-void computeOverallRatios(int count, const double* bmis,
+void computeOverallRatios(const std::vector<PersonRecord>& records,
                           std::array<double, bmi::kBmiCategoryCount>& overallRatios) {
     int categoryCounts[bmi::kBmiCategoryCount] = {0, 0, 0, 0};
+    const std::size_t count = records.size();
     if (count == 0) {
         overallRatios.fill(0.0);
         return;
     }
-    for (int i = 0; i < count; i++) {
-        const int category = bmi::classifyBmiCategory(bmis[i]);
+    for (std::size_t i = 0; i < count; i++) {
+        const int category = bmi::classifyBmiCategory(records[i].bmi);
         if (category >= 0) {
             categoryCounts[category]++;
         }
     }
     for (int category = 0; category < bmi::kBmiCategoryCount; category++) {
         overallRatios[category] =
-            static_cast<double>(categoryCounts[category]) * kPercentScale / count;
+            static_cast<double>(categoryCounts[category]) * kPercentScale /
+            static_cast<double>(count);
     }
 }
 
@@ -248,39 +258,39 @@ double SHealth::computeBmi(double weightKg, double heightCm) {
 }
 
 bool SHealth::loadFromCsv(const std::string& filename) {
-    return shealth::detail::csv::loadFromCsv(filename, count, ids, ages, weights, heights,
-                                             kMaxRecords);
+    return shealth::detail::csv::loadFromCsv(filename, records_, kMaxRecords);
 }
 
 void SHealth::imputeMissingWeights() {
-    shealth::detail::impute::fillWeightZeros(count, ages, weights);
+    shealth::detail::impute::fillWeightZeros(records_);
 }
 
 void SHealth::imputeMissingHeights() {
-    shealth::detail::impute::fillHeightZeros(count, ages, heights);
+    shealth::detail::impute::fillHeightZeros(records_);
 }
 
 void SHealth::computeAllBmi() {
-    for (int i = 0; i < count; i++) {
-        bmis[i] = computeBmi(weights[i], heights[i]);
+    for (PersonRecord& record : records_) {
+        record.bmi = computeBmi(record.weight, record.height);
     }
 }
 
 void SHealth::computeAgeCohortRatios() {
-    shealth::detail::stats::computeAgeCohortRatios(count, ages, bmis, cohortRatios_);
+    shealth::detail::stats::computeAgeCohortRatios(records_, cohortRatios_);
 }
 
 void SHealth::computeOverallRatios() {
-    shealth::detail::stats::computeOverallRatios(count, bmis, overallRatios_);
+    shealth::detail::stats::computeOverallRatios(records_, overallRatios_);
 }
 
 int SHealth::calculateBmi(const std::string& filename) {
-    count = 0;
+    records_.clear();
     for (auto& cohort : cohortRatios_) {
         cohort.fill(0.0);
     }
     overallRatios_.fill(0.0);
     if (!loadFromCsv(filename)) {
+        records_.clear();
         return 0;
     }
 
@@ -289,7 +299,7 @@ int SHealth::calculateBmi(const std::string& filename) {
     computeAllBmi();
     computeAgeCohortRatios();
     computeOverallRatios();
-    return count;
+    return static_cast<int>(records_.size());
 }
 
 double SHealth::getBmiRatio(int ageClass, int type) const {
@@ -303,7 +313,7 @@ double SHealth::getBmiRatio(int ageClass, int type) const {
 
 double SHealth::getOverallBmiRatio(int type) const {
     const int categoryIndex = typeToCategoryIndex(type);
-    if (categoryIndex < 0 || count == 0) {
+    if (categoryIndex < 0 || records_.empty()) {
         return 0.0;
     }
     return overallRatios_[categoryIndex];
@@ -311,13 +321,13 @@ double SHealth::getOverallBmiRatio(int type) const {
 
 std::vector<int> SHealth::getNormalBmiUserIds() const {
     std::vector<int> normalIds;
-    if (count == 0) {
+    if (records_.empty()) {
         return normalIds;
     }
     const int normalIndex = static_cast<int>(BmiCategoryIndex::Normal);
-    for (int i = 0; i < count; i++) {
-        if (classifyBmiCategory(bmis[i]) == normalIndex) {
-            normalIds.push_back(ids[i]);
+    for (const PersonRecord& record : records_) {
+        if (classifyBmiCategory(record.bmi) == normalIndex) {
+            normalIds.push_back(record.id);
         }
     }
     return normalIds;

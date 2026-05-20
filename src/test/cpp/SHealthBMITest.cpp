@@ -34,13 +34,21 @@ public:
         return SHealth::isInAgeCohort(age, ageClass);
     }
 
-    static double WeightAt(const SHealth& health, int index) { return health.weights[index]; }
+    static double WeightAt(const SHealth& health, int index) {
+        return health.records_[static_cast<std::size_t>(index)].weight;
+    }
 
-    static double HeightAt(const SHealth& health, int index) { return health.heights[index]; }
+    static double HeightAt(const SHealth& health, int index) {
+        return health.records_[static_cast<std::size_t>(index)].height;
+    }
 
-    static int IdAt(const SHealth& health, int index) { return health.ids[index]; }
+    static int IdAt(const SHealth& health, int index) {
+        return health.records_[static_cast<std::size_t>(index)].id;
+    }
 
-    static double BmiAt(const SHealth& health, int index) { return health.bmis[index]; }
+    static double BmiAt(const SHealth& health, int index) {
+        return health.records_[static_cast<std::size_t>(index)].bmi;
+    }
 };
 
 class SHealthFixture : public ::testing::Test {
