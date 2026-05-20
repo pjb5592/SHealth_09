@@ -46,6 +46,36 @@ cd build
 ctest
 ```
 
+### Golden Master 회귀 (`shealth.dat` 연령대×4분류 비율)
+
+`SHealthBMI` 실행 결과와 동일한 포맷의 기대 출력을 `test/golden/shealth_bmi.approved.txt`에 보관한다.
+Google Test(`GoldenMaster_*`)가 계산 결과와 golden을 비교한다.
+
+| 항목 | 경로 |
+|------|------|
+| 기대 출력 (approved) | `test/golden/shealth_bmi.approved.txt` |
+| 3단계 수동 baseline (참고) | `docs/refactor_baseline_output.txt` |
+| 리포트 포맷 (공유) | `src/main/cpp/SHealthBmiReport.cpp` |
+
+**실행**
+
+```bash
+cd build
+cmake --build .
+ctest -R GoldenMaster
+```
+
+**golden 갱신** (의도된 동작 변경·버그 수정 후에만)
+
+```bash
+cd build
+cmake --build . --target update-golden-shealth-bmi
+ctest -R GoldenMaster
+```
+
+`update-golden-shealth-bmi`는 프로젝트 루트에서 `SHealthBMI`를 실행해 `test/golden/shealth_bmi.approved.txt`를 덮어쓴다.
+PR에는 golden diff와 갱신 사유를 함께 기록한다.
+
 
 ## 프로젝트 구조
 ```
@@ -58,6 +88,9 @@ src/
     SHealthBMI.cpp     - main 함수 (프로그램 진입점)
   test/cpp/
     SHealthBMITest.cpp - Google Test 기반 단위 테스트
+test/
+  golden/
+    shealth_bmi.approved.txt - SHealthBMI Golden Master 기대 출력
 ```
 
 

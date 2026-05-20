@@ -2,11 +2,14 @@
 #include <cstdio>
 #include <fstream>
 #include <memory>
+#include <sstream>
 #include <string>
+#include <vector>
 
 #include <gtest/gtest.h>
 #include "CsvLoader.h"
 #include "SHealth.h"
+#include "SHealthBmiReport.h"
 
 namespace {
 
@@ -20,6 +23,64 @@ std::string FixturePath(const std::string& name) {
 
 std::string ProjectPath(const std::string& name) {
     return std::string(SHEALTH_PROJECT_ROOT) + "/" + name;
+}
+
+std::string GoldenPath(const std::string& name) {
+    return std::string(SHEALTH_GOLDEN_DIR) + "/" + name;
+}
+
+std::string ReadEntireFile(const std::string& path) {
+    std::ifstream in(path, std::ios::binary);
+    if (!in.is_open()) {
+        return {};
+    }
+    std::ostringstream buffer;
+    buffer << in.rdbuf();
+    return buffer.str();
+}
+
+std::string NormalizeNewlines(std::string text) {
+    std::string normalized;
+    normalized.reserve(text.size());
+    for (char ch : text) {
+        if (ch != '\r') {
+            normalized.push_back(ch);
+        }
+    }
+    return normalized;
+}
+
+struct GoldenRatioRow {
+    int ageClass = 0;
+    double under = 0.0;
+    double normal = 0.0;
+    double over = 0.0;
+    double obese = 0.0;
+};
+
+bool ParseGoldenRatioLine(const std::string& line, GoldenRatioRow& row) {
+    return std::sscanf(line.c_str(),
+                       "%d - underweight = %lf, normal = %lf, overweight = %lf, obesity = %lf",
+                       &row.ageClass, &row.under, &row.normal, &row.over, &row.obese) == 5;
+}
+
+std::vector<GoldenRatioRow> LoadGoldenRatioRows(const std::string& path) {
+    std::vector<GoldenRatioRow> rows;
+    std::ifstream in(path);
+    if (!in.is_open()) {
+        return rows;
+    }
+    std::string line;
+    while (std::getline(in, line)) {
+        if (line.empty()) {
+            continue;
+        }
+        GoldenRatioRow row{};
+        if (ParseGoldenRatioLine(line, row)) {
+            rows.push_back(row);
+        }
+    }
+    return rows;
 }
 
 }  // namespace
@@ -415,31 +476,37 @@ TEST_F(SHealthFixture, CalculateBmi_FailedLoad_ClearsPreviousRatios) {
     EXPECT_DOUBLE_EQ(health_->getBmiRatio(20, 100), 0.0);
 }
 
-// TP-P3-12: shealth.dat 6연령×4 비율 — baseline 회귀 (TC-40)
-TEST_F(SHealthFixture, GetBmiRatio_ShealthDat_MatchesBaseline) {
-    // Given: shealth.dat 전체
-    // When: calculateBmi 후 6연령×4 비율 조회
-    // Then: refactor_baseline_output.txt와 일치
-    struct BaselineRow {
-        int ageClass;
-        double under;
-        double normal;
-        double over;
-        double obese;
-    };
+// --- Golden Master (9단계): shealth.dat 6연령×4 비율 ---
 
-    const BaselineRow expected[] = {
-        {20, 3.511053, 23.797139, 11.833550, 60.858257},
-        {30, 1.863354, 15.527950, 10.062112, 72.546584},
-        {40, 0.521512, 10.039113, 9.126467, 80.312907},
-        {50, 2.181401, 12.629162, 9.988519, 75.200918},
-        {60, 0.862895, 8.533078, 10.642378, 79.961649},
-        {70, 0.529101, 12.345679, 10.758377, 76.366843},
-    };
+// GM-01 / TP-P3-12: SHealthBMI와 동일 포맷 전체 텍스트 vs approved (TC-40)
+TEST_F(SHealthFixture, GoldenMaster_ShealthDat_ReportMatchesApprovedFile) {
+    // Given: shealth.dat + test/golden/shealth_bmi.approved.txt
+    // When: calculateBmi 후 리포트 문자열 생성
+    // Then: golden 파일과 바이트 단위 일치 (SHealthBMI stdout 회귀)
+    const std::string goldenPath = GoldenPath("shealth_bmi.approved.txt");
+    const std::string expected = NormalizeNewlines(ReadEntireFile(goldenPath));
+    ASSERT_FALSE(expected.empty()) << "Missing golden file: " << goldenPath;
+
+    ASSERT_GT(health_->calculateBmi(ProjectPath("shealth.dat")), 0);
+    const std::string actual = NormalizeNewlines(shealth::report::formatCohortBmiRatioReport(*health_));
+
+    EXPECT_EQ(actual, expected)
+        << "Golden mismatch. Re-approve after intentional change:\n"
+        << "  cmake --build build --target update-golden-shealth-bmi";
+}
+
+// GM-02 / TP-P3-12: getBmiRatio 일괄 검증 — approved 파일 파싱 (TC-40)
+TEST_F(SHealthFixture, GoldenMaster_ShealthDat_GetBmiRatiosMatchApprovedFile) {
+    // Given: shealth.dat + approved golden 행 파싱
+    // When: calculateBmi 후 getBmiRatio(ageClass, type) 조회
+    // Then: golden 수치와 일치 (docs/refactor_baseline_output.txt 동일 기준)
+    const std::vector<GoldenRatioRow> expected =
+        LoadGoldenRatioRows(GoldenPath("shealth_bmi.approved.txt"));
+    ASSERT_EQ(expected.size(), 6u);
 
     ASSERT_GT(health_->calculateBmi(ProjectPath("shealth.dat")), 0);
 
-    for (const auto& row : expected) {
+    for (const GoldenRatioRow& row : expected) {
         EXPECT_NEAR(health_->getBmiRatio(row.ageClass, 100), row.under, kRatioEpsilon)
             << "ageClass=" << row.ageClass << " underweight";
         EXPECT_NEAR(health_->getBmiRatio(row.ageClass, 200), row.normal, kRatioEpsilon)

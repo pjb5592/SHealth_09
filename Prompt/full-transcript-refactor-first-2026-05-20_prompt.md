@@ -19,7 +19,7 @@
 | 7 | feature-enhancement | ✅ 완료 | SRP·신규 API·47 TC Green, `docs/feature_changelog.md` |
 | 8 | refactoring-roadmap | ✅ 완료 | `docs/refactoring_plan.md` (Phase 0~7) |
 | 8b | second-refactoring-execution | ✅ 완료 | Phase 0~7 코드·`refactor/phase-1-vector`·49 TC |
-| 9 | golden-master | ⬜ 대기 | Golden 회귀 |
+| 9 | golden-master | ✅ 완료 | `test/golden/`, `SHealthBmiReport`, 50 TC Green |
 | 10 | defect-report | ⬜ 대기 | `docs/defect_report.md` |
 | 11 | architecture | ⬜ 대기 | `docs/architecture.md` |
 | 12 | qa-final-report | ⬜ 대기 | `docs/qa_final_report.md` |
@@ -266,4 +266,28 @@ Report 09·Prompt 09·full-transcript 갱신. git 커밋·푸시.
 
 ---
 
-*마지막 갱신: 2026-05-20 — 2차 리팩토링 Phase 0~7 실행 완료 (`refactor/phase-1-vector`, ctest 49/49)*
+## 단계 9 — golden-master
+
+**User (요약)**  
+Golden Master 회귀 테스트 설계·구현. `shealth.dat` 기준 `SHealthBMI` 6연령×4분류 출력을 `test/golden/shealth_bmi.approved.txt`에 보관, Google Test·CMake `update-golden`·README 문서화.
+
+**Assistant (요약)**  
+`SHealthBmiReport`로 main·테스트 출력 경로 통일. Golden TC 2건(GM-01 전체 텍스트, GM-02 `getBmiRatio` 파싱). `update-golden-shealth-bmi` 타깃. `ctest` **50/50** Green. `SHealthBMI` 수동 출력 = `docs/refactor_baseline_output.txt` 일치.
+
+**산출물:** `test/golden/shealth_bmi.approved.txt`, `src/main/cpp/SHealthBmiReport.*`, `cmake/UpdateGolden.cmake`, `README.md`  
+**Report:** `Report/10.golden-master-report-2026-05-20.md`  
+**Transcript:** `Prompt/10.golden-master-transcript-2026-05-20_prompt.md`
+
+---
+
+## 단계 9 후처리 — 문서·배포
+
+**User (요약)**  
+9단계(Golden Master) 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
+
+**Assistant (요약)**  
+Report 10·Prompt 10·full-transcript 갱신. Golden Master 산출물 포함 git 커밋·푸시.
+
+---
+
+*마지막 갱신: 2026-05-20 — Golden Master 완료 (워크플로우 9, ctest 50/50, `feature`)*

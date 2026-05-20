@@ -10,6 +10,7 @@ add_library(shealth_lib
     src/main/cpp/CsvLoader.cpp
     src/main/cpp/Imputation.cpp
     src/main/cpp/Statistics.cpp
+    src/main/cpp/SHealthBmiReport.cpp
 )
 target_include_directories(shealth_lib PUBLIC src/main/cpp)
 
@@ -34,6 +35,19 @@ target_link_libraries(SHealthBMITest PRIVATE shealth_lib GTest::gtest_main)
 target_compile_definitions(SHealthBMITest PRIVATE
     SHEALTH_FIXTURE_DIR="${CMAKE_SOURCE_DIR}/src/test/fixtures"
     SHEALTH_PROJECT_ROOT="${CMAKE_SOURCE_DIR}"
+    SHEALTH_GOLDEN_DIR="${CMAKE_SOURCE_DIR}/test/golden"
+)
+
+set(SHEALTH_GOLDEN_FILE "${CMAKE_SOURCE_DIR}/test/golden/shealth_bmi.approved.txt")
+add_custom_target(update-golden-shealth-bmi
+    COMMAND ${CMAKE_COMMAND}
+        -DPROJECT_SOURCE_DIR=${CMAKE_SOURCE_DIR}
+        -DEXE=$<TARGET_FILE:SHealthBMI>
+        -DGOLDEN_FILE=${SHEALTH_GOLDEN_FILE}
+        -P ${CMAKE_SOURCE_DIR}/cmake/UpdateGolden.cmake
+    DEPENDS SHealthBMI
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Regenerate test/golden/shealth_bmi.approved.txt from SHealthBMI"
 )
 
 include(GoogleTest)
