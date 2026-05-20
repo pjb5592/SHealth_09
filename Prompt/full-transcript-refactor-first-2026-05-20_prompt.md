@@ -1,6 +1,7 @@
-# Full Transcript — SHealth BMI 리팩토링 우선 (2026-05-20)
+# Full Transcript — SHealth BMI 리팩토링 우선·수정 (2026-05-20)
 
-> 누적 Export. 단계별 상세는 `Prompt/N.<slug>-transcript-2026-05-20_prompt.md` 참조.
+> 누적 Export. 기준: `prompt_리펙토링 우선 진행(수정).md`  
+> 단계별 상세: `Prompt/NN.<slug>-transcript-2026-05-20_prompt.md`
 
 ---
 
@@ -12,19 +13,22 @@
 | 1 | requirements-analysis | ✅ 완료 | `docs/requirements_analysis.md` |
 | 2 | code-quality-report | ✅ 완료 | `docs/code_quality_report.md` |
 | 3 | clean-refactor | ✅ 완료 | `src/main/cpp/SHealth.*`, `docs/refactor_baseline_output.txt` |
-| 4 | defect-analysis | ⬜ 대기 | `docs/defect_list.md` |
-| 5 | feature-enhancement | ⬜ 대기 | 기능 diff |
-| 6 | refactoring-roadmap | ⬜ 대기 | `docs/refactoring_plan.md` |
-| 7 | test-plan | ✅ 완료 | `docs/test_plan.md` |
-| 8 | tdd-implementation | ✅ 완료 | `SHealthBMITest` 35 TC Green, `src/test/fixtures/` |
-| 9~12 | (선택·QA) | ⬜ 대기 | Golden, defect_report, architecture, qa_final_report |
+| 4 | test-plan | ✅ 완료 | `docs/test_plan.md` |
+| 5 | tdd-implementation | ✅ 완료 | `SHealthBMITest` 35 TC Green, `src/test/fixtures/` |
+| 6 | defect-analysis | ⬜ 대기 | `docs/defect_list.md` |
+| 7 | feature-enhancement | ⬜ 대기 | 기능 diff |
+| 8 | refactoring-roadmap | ⬜ 대기 | `docs/refactoring_plan.md` |
+| 9 | golden-master | ⬜ 대기 | Golden 회귀 |
+| 10 | defect-report | ⬜ 대기 | `docs/defect_report.md` |
+| 11 | architecture | ⬜ 대기 | `docs/architecture.md` |
+| 12 | qa-final-report | ⬜ 대기 | `docs/qa_final_report.md` |
 
 ---
 
 ## 단계 0 — cursorrules
 
 **User (요약)**  
-레거시 C++ QA 역할로 SHealth BMI **리팩토링 우선** `.cursorrules` 작성. 스택·도메인·워크플로우·리팩토링·테스트(7~8단계)·README Activities 재해석 포함.
+레거시 C++ QA 역할로 SHealth BMI **리팩토링 우선·수정** `.cursorrules` 작성. 스택·도메인·워크플로우·테스트(4~5단계)·README Activities 재해석 포함.
 
 **Assistant (요약)**  
 `.cursorrules` 생성 — C++17/CMake/GTest/shealth_lib, BMI 도메인, 0~12단계, Activities 재매핑, 리팩토링·테스트 원칙(한글). 다음: 1단계 요구사항 분석.
@@ -117,13 +121,13 @@ Report·Prompt 3종 생성·갱신. git 커밋·푸시.
 
 ---
 
-## 단계 7 — test-plan
+## 단계 4 — test-plan
 
 **User (요약)**  
 시니어 QA 리드 역할로 1차 리팩토링 후 구조에 맞춘 테스트 계획. TDD 4영역(P0~P3), Activities 4 TC 초안, 경계값·예외·Fixture·커버리지 90%+, defect_list TC 매핑 예약 → `docs/test_plan.md`.
 
 **Assistant (요약)**  
-`docs/test_plan.md` 생성. 리팩토링 후 private 단계·Friend/픽스처 전략, TP-P0~P3·§12 DEF 예약, requirements §8 TC 매핑. 8단계 TDD 입력 완료.
+`docs/test_plan.md` 생성. 리팩토링 후 private 단계·Friend/픽스처 전략, TP-P0~P3·§12 DEF 예약, requirements §8 TC 매핑. **5단계** TDD 입력 완료.
 
 **산출물:** `docs/test_plan.md`  
 **Report:** `Report/04.test-plan-report-2026-05-20.md`  
@@ -131,38 +135,38 @@ Report·Prompt 3종 생성·갱신. git 커밋·푸시.
 
 ---
 
-## 단계 7 후처리 — 문서·배포
+## 단계 4 후처리 — 문서·배포
 
 **User (요약)**  
-7단계 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
+4단계 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
 
 **Assistant (요약)**  
 Report·Prompt 3종 생성·갱신. 빌드 통과·ctest 플레이스홀더 실패(예상) 기록. git 커밋·푸시.
 
 ---
 
-## 단계 8 — tdd-implementation
+## 단계 5 — tdd-implementation
 
 **User (요약)**  
 시니어 C++ QA 역할로 `docs/test_plan.md` 기준 TDD. `FAIL()` 제거, P0~P3 테스트 작성, 최소 `SHealth` 수정, Given-When-Then, `cmake --build build && ctest` Green.
 
 **Assistant (요약)**  
-35개 Google Test 작성(P0/P1/P2/P3). `SHealthTestPeer`·픽스처 CSV 8종. 결함 수정: BMI=25 비만, sum/ageCount 0 나누기 방어, `cohortRatios_` 초기화. `ctest` 35/35 Green, `SHealthBMI` baseline 일치. height=0·defect_list는 5·4단계 유보.
+35개 Google Test 작성(P0/P1/P2/P3). `SHealthTestPeer`·픽스처 CSV 8종. 결함 수정: BMI=25 비만, sum/ageCount 0 나누기 방어, `cohortRatios_` 초기화. `ctest` 35/35 Green, `SHealthBMI` baseline 일치. height=0·defect_list는 **7·6단계**로 유보.
 
 **산출물:** `src/test/cpp/SHealthBMITest.cpp`, `src/test/fixtures/`, `SHealth.h/cpp`, `CMakeLists.txt`  
-**Report:** `Report/08.tdd-implementation-report-2026-05-20.md`  
-**Transcript:** `Prompt/08.tdd-implementation-transcript-2026-05-20_prompt.md`
+**Report:** `Report/05.tdd-implementation-report-2026-05-20.md`  
+**Transcript:** `Prompt/05.tdd-implementation-transcript-2026-05-20_prompt.md`
 
 ---
 
-## 단계 8 후처리 — 문서·배포
+## 단계 5 후처리 — 문서·배포
 
 **User (요약)**  
-8단계 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
+5단계 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
 
 **Assistant (요약)**  
 Report·Prompt·full-transcript 생성·갱신. TDD 코드·픽스처 포함 git 커밋·푸시.
 
 ---
 
-*마지막 갱신: 2026-05-20 — 단계 8 완료*
+*마지막 갱신: 2026-05-20 — 수정 워크플로우 기준 단계 5(TDD) 완료*

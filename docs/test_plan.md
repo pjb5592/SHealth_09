@@ -2,11 +2,11 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 목적 | 1차 리팩토링(3단계) 완료 후 코드 구조에 맞춘 TDD·단위·통합 테스트 전략 (8단계 구현 입력) |
+| 문서 목적 | 1차 리팩토링(3단계) 완료 후 코드 구조에 맞춘 TDD·단위·통합 테스트 전략 (**5단계** 구현 입력) |
 | 대상 독자 | C++ QA·TDD 구현 담당자 |
 | 기준 문서 | `README.md`, `docs/requirements_analysis.md`, `docs/code_quality_report.md`, `docs/refactor_baseline_output.txt` |
 | 분석 대상 | `src/main/cpp/SHealth.h`, `SHealth.cpp`, `src/test/cpp/SHealthBMITest.cpp` |
-| 워크플로우 단계 | **7단계** (테스트 계획) → **8단계** TDD 구현 시 본 문서 기준 `ctest` Green |
+| 워크플로우 단계 | **4단계** (테스트 계획) → **5단계** TDD 구현 시 본 문서 기준 `ctest` Green (`prompt_리펙토링 우선 진행(수정).md`) |
 | 코드 변경 | 없음 (본 단계 산출물) |
 
 ---
@@ -29,7 +29,7 @@
 | Private static | `computeBmi`, `classifyBmiCategory`, `isInAgeCohort` | private | 순수 도메인 로직 |
 | Private static | `ageClassToCohortIndex`, `typeToCategoryIndex` | private | API·저장 인덱스 매핑 |
 
-**의도적 미수정(4~5단계·결함 목록 대상)** — 현행 코드 그대로 TC에 반영·수정 후 Green:
+**의도적 미수정(6~7단계·결함 목록 대상)** — 5단계 TDD에서 일부는 최소 수정됨 — 현행 코드 그대로 TC에 반영·수정 후 Green:
 
 - BMI **= 25.0** 미분류 (`classifyBmiCategory` → `-1`, 집계 제외)
 - 연령대 **전원 weight=0** → `ageCount==0` 시 0 나누기
@@ -42,17 +42,17 @@
 | 구분 | 포함 | 제외 |
 |------|------|------|
 | In | `shealth_lib` 도메인·집계·`getBmiRatio` 계약 | UI·네트워크 |
-| In (8단계) | P0~P3 단위·픽스처 통합 TC | |
-| In (5단계 후) | Activities 4 — height 보정, 정상 목록, 전체 비율 API | 8단계 초안 TC만 예약 |
-| Out (8단계) | `SHealthBMI.cpp` main 출력 포맷 자체 | Golden은 9단계 |
+| In (5단계) | P0~P3 단위·픽스처 통합 TC | |
+| In (7단계 후) | Activities 4 — height 보정, 정상 목록, 전체 비율 API | 5단계 초안 TC만 예약 |
+| Out (5단계) | `SHealthBMI.cpp` main 출력 포맷 자체 | Golden은 9단계 |
 | Out | `count ≥ kMaxRecords` 오버플로우 | 별도 성능·안정성 과제 |
 
-### 1.3 완료 조건 (8단계)
+### 1.3 완료 조건 (5단계)
 
 1. `docs/test_plan.md`의 **P0 → P1 → P2 → P3** 순으로 실패 테스트 작성 후 Green.
 2. `cmake --build build && ctest` **전체 통과**.
 3. `SHealthBMITest.cpp`의 `FailedTest` 플레이스홀더 제거.
-4. (4단계 완료 후) §12 결함 재발 TC 매핑 반영.
+4. (6단계 완료 후) §12 결함 재발 TC 매핑 반영.
 
 ---
 
@@ -60,10 +60,10 @@
 
 4개 영역에 **구현·디버깅 순서**를 부여한다. (문서상 P0~P3; 상위 3단계만 강조할 때는 P0→P1→P2를 먼저 Green, P3·통합는 직후.)
 
-| 우선순위 | 영역 | 대상 로직 | 주요 검증 포인트 | 8단계 TC 수(목표) |
+| 우선순위 | 영역 | 대상 로직 | 주요 검증 포인트 | 5단계 TC 수(목표) |
 |----------|------|-----------|------------------|-------------------|
 | **P0** | BMI 계산 | `computeBmi` (간접·직접) | kg·cm→m², 소수·표준 샘플, 극단값 | 5~8 |
-| **P1** | 연령대 평균 보정 | `imputeMissingWeights` (+5단계 `height`) | weight=0, height=0, 전원 0, 연령대 격리 | 8~12 |
+| **P1** | 연령대 평균 보정 | `imputeMissingWeights` (+7단계 `height`) | weight=0, height=0, 전원 0, 연령대 격리 | 8~12 |
 | **P2** | BMI 4단계 분류 | `classifyBmiCategory` | 18.5, 23, 25 경계, README 기준 | 10~14 |
 | **P3** | 연령대 통계·조회 | `isInAgeCohort`, `computeAgeCohortRatios`, `getBmiRatio` | 19/20/29/30, 비율 합≈100%, 잘못된 인자 | 12~16 |
 
@@ -76,9 +76,9 @@
 | TP-P0-03 | README 유사 소수 | 79.5 kg, 158.3 cm | 계산 | 이론값 `EXPECT_NEAR` |
 | TP-P0-04 | 저체중 구간 BMI | 50 kg, 170 cm | 계산 | ≈ 17.30 |
 | TP-P0-05 | 극단 키 | 50 kg, 200 cm | 계산 | 유한 양수 |
-| TP-P0-06 | 키 0 (미보정) | weight>0, height=0 | `calculateBmi` 픽스처 | inf/NaN 또는 4단계 결함 수정 후 유한값 (§6.2) |
+| TP-P0-06 | 키 0 (미보정) | weight>0, height=0 | `calculateBmi` 픽스처 | inf/NaN 또는 **7단계** height 보정 후 유한값 (§6.2) |
 
-**TDD 메모:** `computeBmi`가 `private static`이므로 8단계 시작 시 **아래 §4.1 방식 A 또는 B** 중 하나를 선택한다.
+**TDD 메모:** `computeBmi`가 `private static`이므로 5단계 시작 시 **아래 §4.1 방식 A 또는 B** 중 하나를 선택한다.
 
 ### 2.2 P1 — 연령대 평균 보정 (weight=0, height=0)
 
@@ -87,13 +87,13 @@
 | TP-P1-01 | 단일 0 보정 | 20대: 60 kg, 0 kg | `calculateBmi` | 0 레코드 체중 → 60 |
 | TP-P1-02 | 다중 유효 평균 | 30대: 80, 100, 0 | 보정 | 0 → 90 |
 | TP-P1-03 | 연령대 격리 | 20대 0 / 30대 70만 유효 | 보정 | 20대 평균에 30대 미포함 |
-| TP-P1-04 | 전원 weight=0 | 한 연령대 모두 0 | 보정 | **현행:** UB/NaN 가능 → 4단계 수정 후 0 방어 또는 스킵 (§6.3) |
+| TP-P1-04 | 전원 weight=0 | 한 연령대 모두 0 | 보정 | **5단계:** ageCount=0 스킵 (§6.3) |
 | TP-P1-05 | 연령대 외 0 | age=19, weight=0 | 보정 | 20대 평균 미적용 |
 | TP-P1-06 | 실데이터 스모크 | `shealth.dat` 내 `93730,57,0,...` | `calculateBmi` | 크래시 없음, BMI 유한 |
-| TP-P1-07 | height=0 보정 (5단계) | 40대 170, 0 | F-03 구현 후 | 0 → 170 |
-| TP-P1-08 | 전원 height=0 (5단계) | 한 연령대 height 전부 0 | F-03 | 0 나누기·BMI 방어 |
+| TP-P1-07 | height=0 보정 (7단계) | 40대 170, 0 | F-03 구현 후 | 0 → 170 |
+| TP-P1-08 | 전원 height=0 (7단계) | 한 연령대 height 전부 0 | F-03 | 0 나누기·BMI 방어 |
 
-**보정 순서(5단계 설계 시):** 체중 보정 → 키 보정 → BMI (README 대칭). 8단계는 **weight만** Green 가능, height TC는 `DISABLED_` 또는 `GTEST_SKIP`으로 예약.
+**보정 순서(7단계 설계 시):** 체중 보정 → 키 보정 → BMI (README 대칭). **5단계 TDD**는 **weight만** Green 가능, height TC는 `DISABLED_` 또는 `GTEST_SKIP`으로 예약.
 
 ### 2.3 P2 — BMI 카테고리 분류
 
@@ -114,7 +114,7 @@ BMI ≥ 25             → 비만   (index 3)
 | TP-P2-04 | 22.999 | 정상 | 정상 상한 |
 | TP-P2-05 | **23.0** | 과체중 | |
 | TP-P2-06 | 24.999 | 과체중 | |
-| TP-P2-07 | **25.0** | 비만 | **현행 코드: -1 (결함)** → 4단계 수정 후 Green |
+| TP-P2-07 | **25.0** | 비만 | **5단계 TDD에서 Green** (DEF 회귀) |
 | TP-P2-08 | 30.0 | 비만 | |
 | TP-P2-09 | 18.5 (png 논쟁) | 저체중 | TC-38 회귀, 요구 확정 유지 |
 
@@ -149,7 +149,7 @@ BMI ≥ 25             → 비만   (index 3)
 | **B. 픽스처 통합** | 소형 CSV + `calculateBmi` → BMI·비율 역산 검증 | P1·P3·파일 오류 |
 | **C. 도메인 추출 (5~6단계)** | `shealth::BmiCalculator` 등 헤더 분리 후 public 테스트 | 장기·F-01 정합 |
 
-8단계 **1주차:** A로 P0/P2 Green → B로 P1/P3 Green.
+5단계 **1주차:** A로 P0/P2 Green → B로 P1/P3 Green.
 
 ### 3.2 테스트 파일 구조 (권장)
 
@@ -181,9 +181,9 @@ src/test/cpp/
 
 ## 4. README Activities 4 — 기능 개선별 테스트 범위 초안
 
-워크플로우 **5단계(기능 개선)** 구현 후 **8단계 TC 보강** 또는 `GTEST_SKIP` 해제로 연결한다.
+워크플로우 **7단계(기능 개선)** 구현 후 **5단계 TC 보강** 또는 `GTEST_SKIP` 해제로 연결한다.
 
-| README 항목 | 요구 ID | 구현 단계 | 8단계 TC 범위 (초안) | 우선순위 |
+| README 항목 | 요구 ID | 구현 단계 | 5단계 TC 범위 (초안) | 우선순위 |
 |-------------|---------|-----------|----------------------|----------|
 | SRP·책임 분리 | F-01 | 5~6 | 기존 P0~P3 TC가 깨지지 않음(회귀); 모듈 분리 후 동일 시나리오 ID 유지 | 회귀 |
 | 연령대 BMI 분포 비율 | F-02 | 3(완료) | TP-P3-06~12, baseline | P3 |
@@ -244,7 +244,7 @@ src/test/cpp/
 
 ## 6. 예외·특이 케이스
 
-| ID | 상황 | 현행 동작 | 테스트 기대 (4단계 후) | 우선순위 |
+| ID | 상황 | 현행 동작 | 테스트 기대 (6단계 후) | 우선순위 |
 |----|------|-----------|------------------------|----------|
 | EX-01 | 연령대 **sum=0** | `0/0` → NaN 비율 | 0.0% 또는 집계 스킵 | P3 |
 | EX-02 | 연령대 **전원 weight=0** | `sum/ageCount`, ageCount=0 | 보정 스킵·0 유지·크래시 없음 | P1 |
@@ -253,7 +253,7 @@ src/test/cpp/
 | EX-05 | **파일 미존재** | return 0 | 동일 + `getBmiRatio` 안전 | P3 |
 | EX-06 | `calculateBmi` 실패 후 조회 | 이전 `cohortRatios_` 잔존 가능 | 실패 시 비율 0 초기화 (결함 수정 시) | P3 |
 | EX-07 | 잘못된 `getBmiRatio` | 0.0 | 오류 vs 0% — **문서화된 0.0 유지** | P3 |
-| EX-08 | `count` 상한 초과 | 버퍼 오버플로우 | 4단계: 거부 또는 cap (TC 예약) | Out |
+| EX-08 | `count` 상한 초과 | 버퍼 오버플로우 | 6단계: 거부 또는 cap (TC 예약) | Out |
 
 ### 6.1 일관성 요구 (R-01~R-03)
 
@@ -289,12 +289,12 @@ flowchart TB
 
 | 유형 | 구현 | 용도 | 예시 |
 |------|------|------|------|
-| **인메모리 문자열** | `std::istringstream` + `loadFromCsv` 래핑(5단계) 또는 임시 파일 | P0 역산용 최소 레코드 | 한 줄 CSV |
+| **인메모리 문자열** | `std::istringstream` + `loadFromCsv` 래핑(7단계) 또는 임시 파일 | P0 역산용 최소 레코드 | 한 줄 CSV |
 | **저장 픽스처** | `src/test/fixtures/*.csv` | 반복 TC, 코드리뷰 용이 | `cohort20_equal4.csv` |
 | **런타임 임시 파일** | `std::tmpfile` / `build/test_tmp/*.dat` | 파일 오류·권한 | `empty.dat`, `bad_parse.dat` |
 | **프로젝트 실데이터** | `shealth.dat` (CMake `WORKING_DIRECTORY`) | TP-P1-06, TP-P3-12 | 회귀·스모크 |
 
-### 7.3 표준 픽스처 카탈로그 (8단계 생성 권장)
+### 7.3 표준 픽스처 카탈로그 (5단계 생성 권장)
 
 | 파일명 | 레코드 요약 | 검증 영역 |
 |--------|-------------|-----------|
@@ -334,13 +334,13 @@ protected:
 
 | 대상 | 라인 커버리지 | 분기 커버리지 | 비고 |
 |------|---------------|---------------|------|
-| `SHealth.cpp` | **≥ 90%** | **≥ 85%** | 8단계 완료 시 |
+| `SHealth.cpp` | **≥ 90%** | **≥ 85%** | 5단계 완료 시 |
 | `SHealth.h` (inline 없음) | — | — | 선언만 |
 | **제외** | `SHealthBMI.cpp`, gtest, FetchContent | | |
 
 ### 8.2 측정 절차 (GCC/MinGW 예시)
 
-1. **CMake 옵션 추가 (8단계)**
+1. **CMake 옵션 추가 (5단계)**
 
 ```cmake
 option(SHEALTH_COVERAGE "Enable coverage" OFF)
@@ -373,21 +373,21 @@ genhtml coverage.filtered.info --output-directory build/coverage_html
 
 | 단계 | 활동 |
 |------|------|
-| 1 | 8단계 P0 Green 후 1차 커버리지 측정 (baseline %) |
+| 1 | 5단계 P0 Green 후 1차 커버리지 측정 (baseline %) |
 | 2 | 90% 미만 파일·함수 목록화 (`lcov --list`) |
 | 3 | 미커버 분기 = §5 매트릭스·§6 예외와 매핑해 TC 추가 |
-| 4 | 4단계 결함 수정 TC(§12) 반영 후 재측정 |
+| 4 | 6단계 결함 수정 TC(§12) 반영 후 재측정 |
 | 5 | 9단계 Golden Master 추가 시 **통합 스모크 1건** 유지, 커버리지 하락 방지 |
 
 ---
 
-## 9. 8단계 TDD 실행 순서 (체크리스트)
+## 9. 5단계 TDD 실행 순서 (체크리스트)
 
 | 순서 | 작업 | 산출 |
 |------|------|------|
 | 1 | `FailedTest` 제거, `SHealthFixture`·Friend(또는 B만) 결정 | 빌드 Green 0 tests → scaffold |
 | 2 | **P0** Red → Green (`TP-P0-01`~`05`) | |
-| 3 | **P2** 경계 Red → Green; `TP-P2-07`은 **의도적 Red** 유지 가능(4단계 전) | |
+| 3 | **P2** 경계 Red → Green; `TP-P2-07` BMI=25 | |
 | 4 | **P1** 픽스처 Red → Green | |
 | 5 | **P3** 집계·API·파일 Red → Green | |
 | 6 | `shealth.dat` baseline `TP-P3-12` | |
@@ -401,7 +401,7 @@ genhtml coverage.filtered.info --output-directory build/coverage_html
 | 항목 | 내용 |
 |------|------|
 | 기준 파일 | `docs/refactor_baseline_output.txt` (6연령×4비율) |
-| 8단계 | `TP-P3-12`로 수치 회귀 자동화 |
+| 5단계 | `TP-P3-12`로 수치 회귀 자동화 |
 | 9단계 | `SHealthBMI` stdout 전체 diff 또는 허용 오차 파일 비교 |
 | 결함 수정 후 | baseline **갱신** + PR에 diff 사유 기록 |
 
@@ -428,7 +428,7 @@ genhtml coverage.filtered.info --output-directory build/coverage_html
 
 ## 12. [예약] `docs/defect_list.md` 결함 재발 방지 TC 매핑
 
-> **6단계(결함 분석) 완료 후** `defect_list.md`의 `DEF-xxx` 항목을 아래 표에 채운다. 8단계 마무리 전 최소 1회 동기화.
+> **6단계(결함 분석) 완료 후** `defect_list.md`의 `DEF-xxx` 항목을 아래 표에 채운다. 5단계 마무리 전 최소 1회 동기화.
 
 | DEF-ID | 결함 요약 | 코드 근거 | 재발 방지 TC | 우선순위 | 상태 |
 |--------|-----------|-----------|--------------|----------|------|
@@ -442,7 +442,7 @@ genhtml coverage.filtered.info --output-directory build/coverage_html
 
 **동기화 절차**
 
-1. 4단계에서 `docs/defect_list.md` 작성 (`DEF-001` 형식).
+1. **6단계**에서 `docs/defect_list.md` 작성 (`DEF-001` 형식).
 2. 각 DEF에 본 표 **재발 방지 TC** 열을 링크.
 3. 결함 수정 PR = 해당 TC Red → Green + baseline 갱신 여부 명시.
 
@@ -466,8 +466,8 @@ genhtml coverage.filtered.info --output-directory build/coverage_html
 
 ### 13.3 상수 (1차 리팩토링)
 
-`kBmiUnderweightMax=18.5`, `kBmiNormalUpperExclusive=23`, `kBmiOverweightMin=23`, `kBmiOverweightMaxExclusive=25`, `kBmiObesityMinExclusive=25` — **4단계에서 비만 하한 `>= 25` 정합 시 상수·TC 동시 갱신.**
+`kBmiUnderweightMax=18.5`, `kBmiNormalUpperExclusive=23`, `kBmiOverweightMin=23`, `kBmiOverweightMaxExclusive=25`, `kBmiObesityMinExclusive=25` — **5단계 TDD에서 비만 하한 `>= 25` 정합 완료.**
 
 ---
 
-*문서 버전: 1.0 | 워크플로우 7단계 | 다음 산출물: 8단계 `SHealthBMITest.cpp` TDD 구현 | 선행: `docs/defect_list.md`(4단계), `docs/refactoring_plan.md`(6단계)*
+*문서 버전: 1.1 | 워크플로우 **4단계** | 다음: **5단계** TDD Green | 후속: `defect_list.md`(6단계), `refactoring_plan.md`(5단계) — 기준: `prompt_리펙토링 우선 진행(수정).md`*
