@@ -21,7 +21,7 @@
 | 8b | second-refactoring-execution | ✅ 완료 | Phase 0~7 코드·`refactor/phase-1-vector`·49 TC |
 | 9 | golden-master | ✅ 완료 | `test/golden/`, `SHealthBmiReport`, 50 TC Green |
 | 10 | defect-report | ✅ 완료 | `docs/defect_report.md` |
-| 11 | architecture | ⬜ 대기 | `docs/architecture.md` |
+| 11 | architecture | ✅ 완료 | `docs/architecture.md` |
 | 12 | qa-final-report | ⬜ 대기 | `docs/qa_final_report.md` |
 
 ---
@@ -314,4 +314,28 @@ Report 11·Prompt 11·full-transcript 갱신. `docs/defect_report.md` 포함 git
 
 ---
 
-*마지막 갱신: 2026-05-20 — 결함 관리 프로세스 완료 (워크플로우 10, ctest 50/50, `feature`)*
+## 단계 11 — architecture
+
+**User (요약)**  
+소프트웨어 아키텍트 역할로 리팩토링·테스트·기능 개선 후 최종 구조를 Mermaid 클래스 다이어그램으로 작성. `SHealth` 및 분리된 파서·보정·분류·통계 컴포넌트, Public API, Google Test Fixture 관계 → `docs/architecture.md`.
+
+**Assistant (요약)**  
+`docs/architecture.md` v1.0 생성 — 파사드·`shealth::domain`·`detail::{csv,impute,stats}`·`report`, GTest `SHealthFixture`/`SHealthTestPeer`, Golden Master, 빌드 타깅·설계 결정. 코드 변경 없음. `refactoring_plan.md`와 정합.
+
+**산출물:** `docs/architecture.md`  
+**Report:** `Report/12.architecture-report-2026-05-20.md`  
+**Transcript:** `Prompt/12.architecture-transcript-2026-05-20_prompt.md`
+
+---
+
+## 단계 11 후처리 — 문서·배포
+
+**User (요약)**  
+11단계(설계 다이어그램) 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
+
+**Assistant (요약)**  
+Report 12·Prompt 12·full-transcript 갱신. `docs/architecture.md` 포함 git 커밋·푸시. `ctest` 50/50 Green 확인.
+
+---
+
+*마지막 갱신: 2026-05-20 — 설계 다이어그램 완료 (워크플로우 11, ctest 50/50, `feature`)*
