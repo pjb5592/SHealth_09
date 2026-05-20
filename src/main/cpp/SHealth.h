@@ -5,16 +5,9 @@
 #include <vector>
 
 #include "BmiDomain.h"
+#include "PersonRecord.h"
 
 class SHealthTestPeer;
-
-struct PersonRecord {
-    int id = 0;
-    int age = 0;
-    double weight = 0.0;
-    double height = 0.0;
-    double bmi = 0.0;
-};
 
 class SHealth {
     friend class SHealthTestPeer;

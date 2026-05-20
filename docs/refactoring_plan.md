@@ -22,7 +22,7 @@
 | 매직 넘버 | `BmiDomain.h` 단일 `constexpr`·enum (**완료**) | — |
 | 결함 | DEF-001~008 Fixed (`defect_list.md`) | Phase마다 **회귀 TC** 유지 |
 | 기능(F-03~F-05) | height 보정, `getOverallBmiRatio`, `getNormalBmiUserIds` | API 시그니처 **유지** |
-| 네임스페이스 | `shealth::detail::{csv,impute,stats}` (`SHealth.cpp` 내), `domain` → `BmiDomain.h` | **Phase 4** CsvLoader·Imputation·Statistics 분리 |
+| 네임스페이스 | `shealth::detail::{csv,impute,stats}` — **Phase 4** 별도 `.h`/`.cpp` | — |
 | 저장소 | `vector<PersonRecord> records_` (**Phase 1 완료**) | — |
 
 ### 1.2 Green 유지 검증 명령 (모든 Phase 공통)
@@ -96,7 +96,7 @@ flowchart TB
 | **1** | `PersonRecord` + `vector` | 고정 배열 5개 제거 | 동작 동일·내부만 교체 |
 | **2** | 연령대·BMI **메타데이터 테이블** | `AgeCohortDescriptor`, `BmiCategoryDescriptor` | 상수·루프 치환, 로직 불변 |
 | **3** | type·ageClass **조회 테이블** | `kBmiCategories` lookup (`BmiDomain.h`) | ✅ Phase 2와 동시 완료 |
-| **4** | `shealth::detail` **헤더 분리** | `CsvLoader.h`, `Imputation.h`, `Statistics.h` 등 | `BmiDomain.h`만 분리됨 |
+| **4** | `shealth::detail` **헤더 분리** | `CsvLoader`·`Imputation`·`Statistics`·`PersonRecord.h` | ✅ 완료 |
 | **5** | **istream** 로더 (DIP) | `loadFromCsv(istream&, vector&)` | 파일 경로 래퍼 유지 |
 | **6** | 파사드·API 정리 | 얇은 `SHealth`, 선택적 enum 오버로드 | 기존 int API 유지 |
 | **7** | 상한·성능·문서 | `kMaxRecords` 정책, Out TC | 선택 Phase |
@@ -373,9 +373,9 @@ ctest
 
 ### 체크리스트
 
-- [ ] `SHealth.cpp` **~150줄 이하** 목표(파사드+위임)
-- [ ] 도메인 함수 단위 include 가능
-- [ ] **47/47** Green
+- [x] `SHealth.cpp` **~150줄 이하** 목표(파사드+위임) — **105줄** (2026-05-20)
+- [x] 도메인 함수 단위 include 가능 (`CsvLoader`·`Imputation`·`Statistics`·`PersonRecord.h`)
+- [x] **47/47** Green
 
 ---
 
@@ -513,9 +513,9 @@ ctest
 |------------------------|-----------------|
 | 6-1 `PersonRecord` / `vector` | **1** |
 | 6-2 `BmiClassifier::classify` 단일화 | **2~3** ✅ (`BmiDomain.h` `classifyBmiCategory`) |
-| 6-3 `ImputationService` | **4** (height/weight 대칭 완료 → 파일 분리) |
+| 6-3 `ImputationService` | **4** ✅ (`Imputation.cpp`) |
 | 6-4 `ICsvReader` / `istream` | **5** |
-| 6-5 `AgeCohortStatistics` + 전체 비율 | **2~3** ✅ (stats 테이블 루프), **4** (파일 분리) |
+| 6-5 `AgeCohortStatistics` + 전체 비율 | **2~3** ✅, **4** ✅ (`Statistics.cpp`) |
 | 6-6 정상 목록·enum 래퍼 | **5~6** (F-04·F-05 완료, API 정리) |
 
 ---
@@ -528,7 +528,7 @@ ctest
 | 1 | [x] | 47/47 | `vector<PersonRecord>` (2026-05-20) |
 | 2 | [x] | 47/47 | cohort/category 테이블 (`BmiDomain.h`, 2026-05-20) |
 | 3 | [x] | 47/47 | type lookup (`kBmiCategories`, Phase 2·`b253456`) |
-| 4 | [ ] | 47/47 | 헤더/cpp 분리 |
+| 4 | [x] | 47/47 | 헤더/cpp 분리 (`PersonRecord`, `CsvLoader`, `Imputation`, `Statistics`, 2026-05-20) |
 | 5 | [ ] | 47/47 | `istream` 로더 |
 | 6 | [ ] | 47/47 | 파사드·BMI main 루프 |
 | 7 | [ ] | 47/47+ | cap 정책·TC |
@@ -554,4 +554,4 @@ ctest
 
 ---
 
-*문서 버전: 1.1 | Phase 0~3 체크리스트 반영 (코드·`b253456` 기준) | 다음: **Phase 4** (`CsvLoader`·`Imputation`·`Statistics` 분리)*
+*문서 버전: 1.2 | Phase 0~4 체크리스트 반영 | 다음: **Phase 5** (`istream` CSV DIP)*
