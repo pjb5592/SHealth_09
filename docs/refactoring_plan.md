@@ -137,11 +137,13 @@ cd D:\DEV\SHealth_09\build; cmake --build .; ctest
 
 ### 체크리스트
 
-- [ ] `ctest`: **47 passed, 0 failed**
-- [ ] `docs/defect_list.md` DEF-001~008 **Fixed** 확인
-- [ ] `GetBmiRatio_ShealthDat_MatchesBaseline` Pass
-- [ ] 2차 작업용 브랜치 생성 (예: `refactor/phase-1-vector`)
-- [ ] Phase 1 착수 전 `git status` clean (권장)
+- [x] `ctest`: **47 passed, 0 failed** (2026-05-20)
+- [x] `docs/defect_list.md` DEF-001~008 **Fixed** 확인
+- [x] `GetBmiRatio_ShealthDat_MatchesBaseline` Pass
+- [x] 2차 작업용 브랜치 생성 — `refactor/phase-1-vector` (from `feature` @ `e7bd97c`)
+- [x] Git 태그 `phase-0-baseline` (기준선 스냅샷)
+- [x] `SHealthBMI` 출력 = `docs/refactor_baseline_output.txt` (diff 없음)
+- [x] Phase 1 착수 전 `git status` clean (권장; untracked `cmake_test_discovery_*.json`만 제외)
 
 ---
 
@@ -522,7 +524,7 @@ ctest
 
 | Phase | 완료 [ ] | Green | 핵심 산출 |
 |-------|----------|-------|-----------|
-| 0 | [ ] | 47/47 | baseline·브랜치 |
+| 0 | [x] | 47/47 | baseline·브랜치·태그 `phase-0-baseline` (2026-05-20) |
 | 1 | [ ] | 47/47 | `vector<PersonRecord>` |
 | 2 | [ ] | 47/47 | cohort/category 테이블 |
 | 3 | [ ] | 47/47 | type lookup 테이블 |
