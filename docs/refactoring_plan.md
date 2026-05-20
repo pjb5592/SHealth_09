@@ -98,7 +98,7 @@ flowchart TB
 | **3** | type·ageClass **조회 테이블** | `kBmiCategories` lookup (`BmiDomain.h`) | ✅ Phase 2와 동시 완료 |
 | **4** | `shealth::detail` **헤더 분리** | `CsvLoader`·`Imputation`·`Statistics`·`PersonRecord.h` | ✅ 완료 |
 | **5** | **istream** 로더 (DIP) | `loadFromCsv(istream&, vector&)` | ✅ 완료 |
-| **6** | 파사드·API 정리 | 얇은 `SHealth`, 선택적 enum 오버로드 | 기존 int API 유지 |
+| **6** | 파사드·API 정리 | `BmiCategoryType` 오버로드, `SHealthBMI` 테이블 루프 | ✅ 완료 |
 | **7** | 상한·성능·문서 | `kMaxRecords` 정책, Out TC | 선택 Phase |
 
 **권장 순서:** 0 → 1 → 2 → 3 → (4∥5) → 6 → 7.  
@@ -463,9 +463,10 @@ ctest
 
 ### 체크리스트
 
-- [ ] 파사드 메서드만 외부 노출, domain은 `shealth::` 네임스페이스
-- [ ] **47/47** Green
-- [ ] baseline stdout 일치
+- [x] `getBmiRatio` / `getOverallBmiRatio` `BmiCategoryType` 오버로드, `int` 버전 위임 (2026-05-20)
+- [x] `SHealthBMI.cpp` — `kAgeCohorts` × `kBmiCategories` 테이블 루프
+- [x] **47/47** Green
+- [x] baseline stdout 일치
 
 ---
 
@@ -517,7 +518,7 @@ ctest
 | 6-3 `ImputationService` | **4** ✅ (`Imputation.cpp`) |
 | 6-4 `ICsvReader` / `istream` | **5** ✅ (`CsvLoader::loadFromCsv(istream&)`) |
 | 6-5 `AgeCohortStatistics` + 전체 비율 | **2~3** ✅, **4** ✅ (`Statistics.cpp`) |
-| 6-6 정상 목록·enum 래퍼 | **5~6** (F-04·F-05 완료, API 정리) |
+| 6-6 정상 목록·enum 래퍼 | **6** ✅ (`getBmiRatio(BmiCategoryType)`) |
 
 ---
 
@@ -531,7 +532,7 @@ ctest
 | 3 | [x] | 47/47 | type lookup (`kBmiCategories`, Phase 2·`b253456`) |
 | 4 | [x] | 47/47 | 헤더/cpp 분리 (`PersonRecord`, `CsvLoader`, `Imputation`, `Statistics`, 2026-05-20) |
 | 5 | [x] | 47/47 | `istream` 로더 (2026-05-20) |
-| 6 | [ ] | 47/47 | 파사드·BMI main 루프 |
+| 6 | [x] | 47/47 | 파사드·BMI main 루프 (2026-05-20) |
 | 7 | [ ] | 47/47+ | cap 정책·TC |
 
 ---
@@ -555,4 +556,4 @@ ctest
 
 ---
 
-*문서 버전: 1.3 | Phase 0~5 체크리스트 반영 | 다음: **Phase 6** (파사드·`SHealthBMI` 테이블 루프)*
+*문서 버전: 1.4 | Phase 0~6 체크리스트 반영 | 다음: **Phase 7** (선택, `kMaxRecords` 정책)*

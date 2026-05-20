@@ -69,21 +69,29 @@ int SHealth::calculateBmi(const std::string& filename) {
     return static_cast<int>(records_.size());
 }
 
-double SHealth::getBmiRatio(int ageClass, int type) const {
+double SHealth::getBmiRatio(int ageClass, BmiCategoryType type) const {
     const int cohortIndex = ageClassToCohortIndex(ageClass);
-    const int categoryIndex = typeToCategoryIndex(type);
+    const int categoryIndex = typeToCategoryIndex(static_cast<int>(type));
     if (cohortIndex < 0 || categoryIndex < 0) {
         return 0.0;
     }
     return cohortRatios_[cohortIndex][categoryIndex];
 }
 
-double SHealth::getOverallBmiRatio(int type) const {
-    const int categoryIndex = typeToCategoryIndex(type);
+double SHealth::getBmiRatio(int ageClass, int type) const {
+    return getBmiRatio(ageClass, static_cast<BmiCategoryType>(type));
+}
+
+double SHealth::getOverallBmiRatio(BmiCategoryType type) const {
+    const int categoryIndex = typeToCategoryIndex(static_cast<int>(type));
     if (categoryIndex < 0 || records_.empty()) {
         return 0.0;
     }
     return overallRatios_[categoryIndex];
+}
+
+double SHealth::getOverallBmiRatio(int type) const {
+    return getOverallBmiRatio(static_cast<BmiCategoryType>(type));
 }
 
 std::vector<int> SHealth::getNormalBmiUserIds() const {

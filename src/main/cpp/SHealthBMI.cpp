@@ -1,20 +1,23 @@
 #include "SHealth.h"
 
+#include "BmiDomain.h"
+
 #include <cstdio>
 
 int main() {
     SHealth shealth;
     shealth.calculateBmi("shealth.dat");
 
-    for (int ageClass = 20; ageClass <= 70; ageClass += 10) {
-        printf("%d - underweight = %f, normal = %f, overweight = %f, obesity = %f\n",
-               ageClass,
-               shealth.getBmiRatio(ageClass,
-                                   static_cast<int>(SHealth::BmiCategoryType::Underweight)),
-               shealth.getBmiRatio(ageClass, static_cast<int>(SHealth::BmiCategoryType::Normal)),
-               shealth.getBmiRatio(ageClass,
-                                   static_cast<int>(SHealth::BmiCategoryType::Overweight)),
-               shealth.getBmiRatio(ageClass, static_cast<int>(SHealth::BmiCategoryType::Obesity)));
+    for (const shealth::domain::AgeCohortDescriptor& cohort : shealth::domain::kAgeCohorts) {
+        const auto& firstCategory = shealth::domain::kBmiCategories[0];
+        printf("%d - %s = %f", cohort.ageClass, firstCategory.label,
+               shealth.getBmiRatio(cohort.ageClass, firstCategory.apiType));
+        for (std::size_t i = 1; i < shealth::domain::kBmiCategoryTableSize; ++i) {
+            const auto& category = shealth::domain::kBmiCategories[i];
+            printf(", %s = %f", category.label,
+                   shealth.getBmiRatio(cohort.ageClass, category.apiType));
+        }
+        printf("\n");
     }
 
     return 0;

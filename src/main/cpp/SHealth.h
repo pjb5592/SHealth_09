@@ -15,7 +15,9 @@ public:
     using BmiCategoryType = shealth::domain::BmiCategoryType;
 
     int calculateBmi(const std::string& filename);
+    double getBmiRatio(int ageClass, BmiCategoryType type) const;
     double getBmiRatio(int ageClass, int type) const;
+    double getOverallBmiRatio(BmiCategoryType type) const;
     double getOverallBmiRatio(int type) const;
     std::vector<int> getNormalBmiUserIds() const;
 
