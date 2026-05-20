@@ -359,12 +359,12 @@ docs/test_plan.md 기준으로 실패 테스트부터 작성한 뒤 Green까지 
 [P] 프로젝트 문서·배포 담당
 [C] 방금 완료한 단계 번호 N, 산출물 경로, 워크플로우: 리팩토링 우선
 [T] 아래 순서로 실행
-    1) Report/N.<단계-slug>-report-YYYY-MM-DD.md 생성
+    1) Report/NN.<단계-slug>-report-YYYY-MM-DD.md 생성
        - 수행 작업, 변경 파일, 검증 결과(build/ctest/수동출력), 다음 단계 권고
-    2) Prompt/N.<단계-slug>-transcript-YYYY-MM-DD_prompt.md Export
+    2) Prompt/NN.<단계-slug>-transcript-YYYY-MM-DD_prompt.md Export
        - User 프롬프트 + Assistant 요약만 (대화형 형식)
     3) Prompt/full-transcript-refactor-first-YYYY-MM-DD_prompt.md 갱신
-    4) (사용자 요청 시) git add → commit → push
+    4) git add → commit → push
 [F] 생성·갱신된 파일 경로 목록 + git 결과
 ```
 

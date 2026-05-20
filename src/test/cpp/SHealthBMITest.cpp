@@ -52,6 +52,7 @@ protected:
 
 // --- P0: BMI 계산 ---
 
+// TP-P0-01: 표준 BMI (70kg, 170cm)
 TEST(SHealthBMITest, ComputeBmi_StandardWeightHeight_ReturnsNear2422) {
     // Given: 체중 70kg, 키 170cm
     // When: BMI를 계산하면
@@ -60,6 +61,7 @@ TEST(SHealthBMITest, ComputeBmi_StandardWeightHeight_ReturnsNear2422) {
     EXPECT_NEAR(bmi, 24.221453, kBmiEpsilon);
 }
 
+// TP-P0-02: cm→m 변환 (80kg, 180cm)
 TEST(SHealthBMITest, ComputeBmi_CmToMeterConversion_ReturnsNear2469) {
     // Given: 체중 80kg, 키 180cm
     // When: BMI를 계산하면
@@ -68,6 +70,7 @@ TEST(SHealthBMITest, ComputeBmi_CmToMeterConversion_ReturnsNear2469) {
     EXPECT_NEAR(bmi, 80.0 / (1.8 * 1.8), kBmiEpsilon);
 }
 
+// TP-P0-03: README 유사 소수 체중·키
 TEST(SHealthBMITest, ComputeBmi_ReadmeLikeDecimals_ReturnsExpected) {
     // Given: README 유사 소수 샘플
     // When: BMI를 계산하면
@@ -77,6 +80,7 @@ TEST(SHealthBMITest, ComputeBmi_ReadmeLikeDecimals_ReturnsExpected) {
     EXPECT_NEAR(bmi, 79.5 / (heightM * heightM), kBmiEpsilon);
 }
 
+// TP-P0-04: 저체중 구간 BMI
 TEST(SHealthBMITest, ComputeBmi_UnderweightRange_ReturnsNear1730) {
     // Given: 저체중 구간 체중·키
     // When: BMI를 계산하면
@@ -85,6 +89,7 @@ TEST(SHealthBMITest, ComputeBmi_UnderweightRange_ReturnsNear1730) {
     EXPECT_NEAR(bmi, 17.301038, kBmiEpsilon);
 }
 
+// TP-P0-05: 극단 키 (50kg, 200cm) 유한 양수
 TEST(SHealthBMITest, ComputeBmi_TallHeight_ReturnsFinitePositive) {
     // Given: 극단적으로 큰 키
     // When: BMI를 계산하면
@@ -103,6 +108,7 @@ constexpr int kOverweight = 2;
 constexpr int kObesity = 3;
 }  // namespace BmiCat
 
+// TP-P2-01: BMI 17.0 → 저체중
 TEST(SHealthBMITest, ClassifyBmi_17_ReturnsUnderweight) {
     // Given: BMI 17.0
     // When: 분류하면
@@ -110,6 +116,7 @@ TEST(SHealthBMITest, ClassifyBmi_17_ReturnsUnderweight) {
     EXPECT_EQ(SHealthTestPeer::ClassifyBmiCategory(17.0), BmiCat::kUnderweight);
 }
 
+// TP-P2-02: BMI 18.5 → 저체중 (README·TC-38)
 TEST(SHealthBMITest, ClassifyBmi_18_5_ReturnsUnderweight) {
     // Given: BMI 18.5 (경계)
     // When: 분류하면
@@ -117,6 +124,7 @@ TEST(SHealthBMITest, ClassifyBmi_18_5_ReturnsUnderweight) {
     EXPECT_EQ(SHealthTestPeer::ClassifyBmiCategory(18.5), BmiCat::kUnderweight);
 }
 
+// TP-P2-03: BMI 18.500001 → 정상
 TEST(SHealthBMITest, ClassifyBmi_18_500001_ReturnsNormal) {
     // Given: BMI 18.500001
     // When: 분류하면
@@ -124,6 +132,7 @@ TEST(SHealthBMITest, ClassifyBmi_18_500001_ReturnsNormal) {
     EXPECT_EQ(SHealthTestPeer::ClassifyBmiCategory(18.500001), BmiCat::kNormal);
 }
 
+// TP-P2-04: BMI 22.999 → 정상
 TEST(SHealthBMITest, ClassifyBmi_22_999_ReturnsNormal) {
     // Given: BMI 22.999
     // When: 분류하면
@@ -131,6 +140,7 @@ TEST(SHealthBMITest, ClassifyBmi_22_999_ReturnsNormal) {
     EXPECT_EQ(SHealthTestPeer::ClassifyBmiCategory(22.999), BmiCat::kNormal);
 }
 
+// TP-P2-05: BMI 23.0 → 과체중
 TEST(SHealthBMITest, ClassifyBmi_23_ReturnsOverweight) {
     // Given: BMI 23.0 (경계)
     // When: 분류하면
@@ -138,6 +148,7 @@ TEST(SHealthBMITest, ClassifyBmi_23_ReturnsOverweight) {
     EXPECT_EQ(SHealthTestPeer::ClassifyBmiCategory(23.0), BmiCat::kOverweight);
 }
 
+// TP-P2-06: BMI 24.999 → 과체중
 TEST(SHealthBMITest, ClassifyBmi_24_999_ReturnsOverweight) {
     // Given: BMI 24.999
     // When: 분류하면
@@ -145,6 +156,7 @@ TEST(SHealthBMITest, ClassifyBmi_24_999_ReturnsOverweight) {
     EXPECT_EQ(SHealthTestPeer::ClassifyBmiCategory(24.999), BmiCat::kOverweight);
 }
 
+// TP-P2-07: BMI 25.0 → 비만 (EX-04 회귀)
 TEST(SHealthBMITest, ClassifyBmi_25_ReturnsObesity) {
     // Given: BMI 25.0 (비만 하한, DEF 회귀)
     // When: 분류하면
@@ -152,6 +164,7 @@ TEST(SHealthBMITest, ClassifyBmi_25_ReturnsObesity) {
     EXPECT_EQ(SHealthTestPeer::ClassifyBmiCategory(25.0), BmiCat::kObesity);
 }
 
+// TP-P2-08: BMI 30.0 → 비만
 TEST(SHealthBMITest, ClassifyBmi_30_ReturnsObesity) {
     // Given: BMI 30.0
     // When: 분류하면
@@ -161,6 +174,7 @@ TEST(SHealthBMITest, ClassifyBmi_30_ReturnsObesity) {
 
 // --- P1: 연령대 평균 보정 (weight=0) ---
 
+// TP-P1-01: 20대 단일 체중 0 → 동일 연령대 평균(60) 대체
 TEST_F(SHealthFixture, ImputeWeight_SingleZeroIn20s_ReplacesWith60) {
     // Given: 20대 60kg 1명과 체중 0 1명
     // When: calculateBmi로 보정하면
@@ -169,6 +183,7 @@ TEST_F(SHealthFixture, ImputeWeight_SingleZeroIn20s_ReplacesWith60) {
     EXPECT_DOUBLE_EQ(SHealthTestPeer::WeightAt(*health_, 1), 60.0);
 }
 
+// TP-P1-02: 30대 다중 유효 체중 평균 → 0 레코드 90
 TEST_F(SHealthFixture, ImputeWeight_MultiZeroIn30s_ReplacesWith90) {
     // Given: 30대 80·100·0
     // When: 보정하면
@@ -177,6 +192,7 @@ TEST_F(SHealthFixture, ImputeWeight_MultiZeroIn30s_ReplacesWith90) {
     EXPECT_DOUBLE_EQ(SHealthTestPeer::WeightAt(*health_, 2), 90.0);
 }
 
+// TP-P1-03: 연령대 격리 — 타 연령대 평균 미혼입 (TC-37)
 TEST_F(SHealthFixture, ImputeWeight_CrossCohort_DoesNotMixAverages) {
     // Given: 20대 0, 30대 70만 유효
     // When: 보정하면
@@ -185,6 +201,7 @@ TEST_F(SHealthFixture, ImputeWeight_CrossCohort_DoesNotMixAverages) {
     EXPECT_DOUBLE_EQ(SHealthTestPeer::WeightAt(*health_, 0), 0.0);
 }
 
+// TP-P1-04: 연령대 전원 weight=0 → 보정 스킵·0 나누기 없음 (EX-02)
 TEST_F(SHealthFixture, ImputeWeight_AllZeroInCohort_LeavesZeroNoCrash) {
     // Given: 30대 전원 체중 0
     // When: 보정하면
@@ -195,6 +212,7 @@ TEST_F(SHealthFixture, ImputeWeight_AllZeroInCohort_LeavesZeroNoCrash) {
     EXPECT_DOUBLE_EQ(SHealthTestPeer::BmiAt(*health_, 0), 0.0);
 }
 
+// TP-P1-05: 연령대 외(19세) 체중 0 — 20대 평균 미적용
 TEST_F(SHealthFixture, ImputeWeight_Age19Zero_Uses20sCohortOnly) {
     // Given: 19세 체중 0, 25세 60kg
     // When: 보정하면
@@ -203,6 +221,7 @@ TEST_F(SHealthFixture, ImputeWeight_Age19Zero_Uses20sCohortOnly) {
     EXPECT_DOUBLE_EQ(SHealthTestPeer::WeightAt(*health_, 0), 0.0);
 }
 
+// TP-P1-06: shealth.dat 체중 0 레코드 — 크래시 없음·유한 BMI (TC-19)
 TEST_F(SHealthFixture, CalculateBmi_RealDataWeightZero_DoesNotCrash) {
     // Given: shealth.dat 내 체중 0 레코드 포함
     // When: calculateBmi 실행
@@ -220,6 +239,7 @@ TEST_F(SHealthFixture, CalculateBmi_RealDataWeightZero_DoesNotCrash) {
 
 // --- P3: 연령대·비율·getBmiRatio ---
 
+// TP-P3-01: age=20 → 20대 [20,30) 포함 (TC-12)
 TEST(SHealthBMITest, IsInAgeCohort_Age20In20s_ReturnsTrue) {
     // Given: 나이 20
     // When: 20대 구간 판별
@@ -227,6 +247,7 @@ TEST(SHealthBMITest, IsInAgeCohort_Age20In20s_ReturnsTrue) {
     EXPECT_TRUE(SHealthTestPeer::IsInAgeCohort(20, 20));
 }
 
+// TP-P3-02: age=29 → 20대 상한 포함 (TC-13)
 TEST(SHealthBMITest, IsInAgeCohort_Age29In20s_ReturnsTrue) {
     // Given: 나이 29
     // When: 20대 구간 판별
@@ -234,6 +255,7 @@ TEST(SHealthBMITest, IsInAgeCohort_Age29In20s_ReturnsTrue) {
     EXPECT_TRUE(SHealthTestPeer::IsInAgeCohort(29, 20));
 }
 
+// TP-P3-03: age=30 → 20대 제외·30대 포함 (TC-14)
 TEST(SHealthBMITest, IsInAgeCohort_Age30_NotIn20s_In30s) {
     // Given: 나이 30
     // When: 20대·30대 판별
@@ -242,6 +264,7 @@ TEST(SHealthBMITest, IsInAgeCohort_Age30_NotIn20s_In30s) {
     EXPECT_TRUE(SHealthTestPeer::IsInAgeCohort(30, 30));
 }
 
+// TP-P3-04: age=19 → 20대 집계 미포함 (TC-15)
 TEST(SHealthBMITest, IsInAgeCohort_Age19_NotIn20s) {
     // Given: 나이 19
     // When: 20대 판별
@@ -249,6 +272,7 @@ TEST(SHealthBMITest, IsInAgeCohort_Age19_NotIn20s) {
     EXPECT_FALSE(SHealthTestPeer::IsInAgeCohort(19, 20));
 }
 
+// TP-P3-05: age=79 → 70대 [70,80) 포함 (TC-16)
 TEST(SHealthBMITest, IsInAgeCohort_Age79_In70s) {
     // Given: 나이 79
     // When: 70대 판별
@@ -256,6 +280,7 @@ TEST(SHealthBMITest, IsInAgeCohort_Age79_In70s) {
     EXPECT_TRUE(SHealthTestPeer::IsInAgeCohort(79, 70));
 }
 
+// TP-P3-06: 20대 4범주 각 25%·합 ≈100% (TC-23, R-01, R-02)
 TEST_F(SHealthFixture, GetBmiRatio_FourCategoriesEach25Percent) {
     // Given: 20대 4명 각 BMI 범주 1명
     // When: getBmiRatio 조회
@@ -272,6 +297,7 @@ TEST_F(SHealthFixture, GetBmiRatio_FourCategoriesEach25Percent) {
     EXPECT_NEAR(under + normal + over + obese, 100.0, kRatioSumEpsilon);
 }
 
+// TP-P3-07: 20대 저체중 2/10 → getBmiRatio(20,100)=20% (TC-24)
 TEST_F(SHealthFixture, GetBmiRatio_Underweight2Of10_Returns20) {
     // Given: 20대 10명 중 저체중 2명
     // When: type 100 조회
@@ -280,6 +306,7 @@ TEST_F(SHealthFixture, GetBmiRatio_Underweight2Of10_Returns20) {
     EXPECT_NEAR(health_->getBmiRatio(20, 100), 20.0, kRatioEpsilon);
 }
 
+// TP-P3-08: 잘못된 type=999 → 0.0 (TC-26)
 TEST_F(SHealthFixture, GetBmiRatio_InvalidType_ReturnsZero) {
     // Given: 유효 데이터 로드 후
     // When: 잘못된 type 조회
@@ -288,6 +315,7 @@ TEST_F(SHealthFixture, GetBmiRatio_InvalidType_ReturnsZero) {
     EXPECT_DOUBLE_EQ(health_->getBmiRatio(20, 999), 0.0);
 }
 
+// TP-P3-09: 잘못된 ageClass=25 → 0.0 (TC-27)
 TEST_F(SHealthFixture, GetBmiRatio_InvalidAgeClass_ReturnsZero) {
     // Given: 유효 데이터 로드 후
     // When: 잘못된 ageClass 조회
@@ -296,6 +324,7 @@ TEST_F(SHealthFixture, GetBmiRatio_InvalidAgeClass_ReturnsZero) {
     EXPECT_DOUBLE_EQ(health_->getBmiRatio(25, 100), 0.0);
 }
 
+// TP-P3-10: sum=0 연령대(헤더만 CSV) → 0%·0 나누기 없음 (EX-01, TC-29)
 TEST_F(SHealthFixture, GetBmiRatio_EmptyCohort_ReturnsZeroNoDivideByZero) {
     // Given: 헤더만 있는 CSV (20대 무인원)
     // When: 20대 비율 조회
@@ -305,6 +334,7 @@ TEST_F(SHealthFixture, GetBmiRatio_EmptyCohort_ReturnsZeroNoDivideByZero) {
     EXPECT_DOUBLE_EQ(health_->getBmiRatio(20, 200), 0.0);
 }
 
+// TP-P3-11: BMI=25.0 1명 → 비만 100% 집계 (EX-04, TC-31)
 TEST_F(SHealthFixture, GetBmiRatio_Bmi25CountedAsObesity) {
     // Given: BMI 정확히 25인 20대 1명
     // When: 비만 비율 조회
@@ -313,6 +343,7 @@ TEST_F(SHealthFixture, GetBmiRatio_Bmi25CountedAsObesity) {
     EXPECT_NEAR(health_->getBmiRatio(20, 400), 100.0, kRatioEpsilon);
 }
 
+// TP-P3-15: 파일 미존재 → calculateBmi 0 반환 (EX-05, TC-28)
 TEST_F(SHealthFixture, CalculateBmi_MissingFile_ReturnsZero) {
     // Given: 존재하지 않는 파일
     // When: calculateBmi 호출
@@ -320,6 +351,7 @@ TEST_F(SHealthFixture, CalculateBmi_MissingFile_ReturnsZero) {
     EXPECT_EQ(health_->calculateBmi(ProjectPath("no_such_file.dat")), 0);
 }
 
+// TP-P3-14: calculateBmi 미호출 → getBmiRatio 0.0
 TEST_F(SHealthFixture, GetBmiRatio_WithoutCalculateBmi_ReturnsZero) {
     // Given: calculateBmi 미호출
     // When: getBmiRatio 조회
@@ -327,6 +359,7 @@ TEST_F(SHealthFixture, GetBmiRatio_WithoutCalculateBmi_ReturnsZero) {
     EXPECT_DOUBLE_EQ(health_->getBmiRatio(20, 100), 0.0);
 }
 
+// TP-P3-13: 동일 파일 calculateBmi 2회 → idempotent (TC-36)
 TEST_F(SHealthFixture, CalculateBmi_TwiceSameFile_IdempotentRatios) {
     // Given: 동일 픽스처
     // When: calculateBmi 두 번 호출
@@ -338,6 +371,7 @@ TEST_F(SHealthFixture, CalculateBmi_TwiceSameFile_IdempotentRatios) {
     EXPECT_NEAR(health_->getBmiRatio(20, 100), first, kRatioEpsilon);
 }
 
+// EX-06: calculateBmi 실패 후 이전 cohortRatios_ 잔존 방지
 TEST_F(SHealthFixture, CalculateBmi_FailedLoad_ClearsPreviousRatios) {
     // Given: 먼저 유효 파일 로드
     // When: 실패하는 파일로 재호출
@@ -348,6 +382,7 @@ TEST_F(SHealthFixture, CalculateBmi_FailedLoad_ClearsPreviousRatios) {
     EXPECT_DOUBLE_EQ(health_->getBmiRatio(20, 100), 0.0);
 }
 
+// TP-P3-12: shealth.dat 6연령×4 비율 — baseline 회귀 (TC-40)
 TEST_F(SHealthFixture, GetBmiRatio_ShealthDat_MatchesBaseline) {
     // Given: shealth.dat 전체
     // When: calculateBmi 후 6연령×4 비율 조회

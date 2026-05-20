@@ -189,7 +189,9 @@
     2) 테스트 통과에 필요한 최소 수정만 SHealth에 추가
     3) Given-When-Then 주석, EXPECT_NEAR/EXPECT_DOUBLE_EQ 적절 사용
     4) (6단계 완료 후) defect_list 항목 회귀 TC 보강
-[F] 완성 테스트 코드 + 구현 diff. cmake --build build && ctest Green
+[F] 완성 테스트 코드 + 구현 diff. cmake --build build && ctest Green 
+    - 각 Test Case 앞에는 어떤 test를 진행하는지 주석으로 설명
+    - 출력 형식: ID: 시나리오 
 ```
 
 **완료 기준:** `ctest` 전체 Green (`SHealthBMITest` 포함)
