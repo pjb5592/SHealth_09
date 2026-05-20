@@ -97,7 +97,7 @@ flowchart TB
 | **2** | 연령대·BMI **메타데이터 테이블** | `AgeCohortDescriptor`, `BmiCategoryDescriptor` | 상수·루프 치환, 로직 불변 |
 | **3** | type·ageClass **조회 테이블** | `kBmiCategories` lookup (`BmiDomain.h`) | ✅ Phase 2와 동시 완료 |
 | **4** | `shealth::detail` **헤더 분리** | `CsvLoader`·`Imputation`·`Statistics`·`PersonRecord.h` | ✅ 완료 |
-| **5** | **istream** 로더 (DIP) | `loadFromCsv(istream&, vector&)` | 파일 경로 래퍼 유지 |
+| **5** | **istream** 로더 (DIP) | `loadFromCsv(istream&, vector&)` | ✅ 완료 |
 | **6** | 파사드·API 정리 | 얇은 `SHealth`, 선택적 enum 오버로드 | 기존 int API 유지 |
 | **7** | 상한·성능·문서 | `kMaxRecords` 정책, Out TC | 선택 Phase |
 
@@ -414,9 +414,10 @@ ctest
 
 ### 체크리스트
 
-- [ ] `calculateBmi` public 시그니처 **변경 없음**
-- [ ] DEF-006·008 회귀 TC Pass
-- [ ] **47/47** Green
+- [x] `calculateBmi` public 시그니처 **변경 없음** (2026-05-20)
+- [x] `loadFromCsv(std::istream&, …)` DIP — `CsvLoader.cpp`
+- [x] DEF-006·008 회귀 TC Pass
+- [x] **47/47** Green
 
 ---
 
@@ -514,7 +515,7 @@ ctest
 | 6-1 `PersonRecord` / `vector` | **1** |
 | 6-2 `BmiClassifier::classify` 단일화 | **2~3** ✅ (`BmiDomain.h` `classifyBmiCategory`) |
 | 6-3 `ImputationService` | **4** ✅ (`Imputation.cpp`) |
-| 6-4 `ICsvReader` / `istream` | **5** |
+| 6-4 `ICsvReader` / `istream` | **5** ✅ (`CsvLoader::loadFromCsv(istream&)`) |
 | 6-5 `AgeCohortStatistics` + 전체 비율 | **2~3** ✅, **4** ✅ (`Statistics.cpp`) |
 | 6-6 정상 목록·enum 래퍼 | **5~6** (F-04·F-05 완료, API 정리) |
 
@@ -529,7 +530,7 @@ ctest
 | 2 | [x] | 47/47 | cohort/category 테이블 (`BmiDomain.h`, 2026-05-20) |
 | 3 | [x] | 47/47 | type lookup (`kBmiCategories`, Phase 2·`b253456`) |
 | 4 | [x] | 47/47 | 헤더/cpp 분리 (`PersonRecord`, `CsvLoader`, `Imputation`, `Statistics`, 2026-05-20) |
-| 5 | [ ] | 47/47 | `istream` 로더 |
+| 5 | [x] | 47/47 | `istream` 로더 (2026-05-20) |
 | 6 | [ ] | 47/47 | 파사드·BMI main 루프 |
 | 7 | [ ] | 47/47+ | cap 정책·TC |
 
@@ -554,4 +555,4 @@ ctest
 
 ---
 
-*문서 버전: 1.2 | Phase 0~4 체크리스트 반영 | 다음: **Phase 5** (`istream` CSV DIP)*
+*문서 버전: 1.3 | Phase 0~5 체크리스트 반영 | 다음: **Phase 6** (파사드·`SHealthBMI` 테이블 루프)*

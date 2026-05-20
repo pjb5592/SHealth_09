@@ -18,10 +18,8 @@ std::vector<std::string> split(const std::string& line, char delimiter) {
     return tokens;
 }
 
-bool loadFromCsv(const std::string& filename, std::vector<PersonRecord>& records, int maxRecords) {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Failed to open file: " << filename << std::endl;
+bool loadFromCsv(std::istream& input, std::vector<PersonRecord>& records, int maxRecords) {
+    if (!input) {
         return false;
     }
 
@@ -29,8 +27,8 @@ bool loadFromCsv(const std::string& filename, std::vector<PersonRecord>& records
     records.reserve(static_cast<std::size_t>(maxRecords));
 
     std::string line;
-    std::getline(file, line);
-    while (std::getline(file, line)) {
+    std::getline(input, line);
+    while (std::getline(input, line)) {
         const std::vector<std::string> tokens = split(line, ',');
         if (tokens.empty()) {
             continue;
@@ -53,6 +51,15 @@ bool loadFromCsv(const std::string& filename, std::vector<PersonRecord>& records
         }
     }
     return true;
+}
+
+bool loadFromCsv(const std::string& filename, std::vector<PersonRecord>& records, int maxRecords) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filename << std::endl;
+        return false;
+    }
+    return loadFromCsv(file, records, maxRecords);
 }
 
 }  // namespace csv
