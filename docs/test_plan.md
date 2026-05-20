@@ -29,13 +29,13 @@
 | Private static | `computeBmi`, `classifyBmiCategory`, `isInAgeCohort` | private | 순수 도메인 로직 |
 | Private static | `ageClassToCohortIndex`, `typeToCategoryIndex` | private | API·저장 인덱스 매핑 |
 
-**의도적 미수정(6~7단계·결함 목록 대상)** — 5단계 TDD에서 일부는 최소 수정됨 — 현행 코드 그대로 TC에 반영·수정 후 Green:
+**결함 분석(4단계) 반영 상태** — `docs/defect_list.md` 기준:
 
-- BMI **= 25.0** 미분류 (`classifyBmiCategory` → `-1`, 집계 제외)
-- 연령대 **전원 weight=0** → `ageCount==0` 시 0 나누기
-- 연령대 **무인원** → `sum==0` 시 0 나누기
-- **height=0** 보정 미구현 → BMI 무한대 위험
-- `calculateBmi` 실패 시 `cohortRatios_` 잔존 가능
+| 상태 | 항목 |
+|------|------|
+| **Fixed** (5·4단계) | BMI=25 비만 분류, sum=0·ageCount=0 0 나누기 방어, `cohortRatios_` 실패 시 초기화, CSV 빈 줄 `continue`, `count` 상한·파싱 예외 방어 |
+| **Deferred** (7단계) | **height=0** 연령대 평균 보정 미구현 → BMI 무한대 위험 (TP-P1-07/08, TP-P0-06 예약) |
+| **Open** | 없음 (DEF-001~004, 006~008 Green; DEF-005만 Deferred) |
 
 ### 1.2 테스트 범위(In / Out)
 
@@ -215,7 +215,7 @@ src/test/cpp/
 | 22.999 | 정상 | 정상 | 정상 | 정상 | TP-P2-04 |
 | **23.0** | 과체중 | 과체중 | **과체중** | 과체중 | TP-P2-05 |
 | 24.999 | 과체중 | 과체중 | 과체중 | 과체중 | TP-P2-06 |
-| **25.0** | 비만 | 비만 | **비만** | **-1 (결함)** | TP-P2-07 |
+| **25.0** | 비만 | 비만 | **비만** | 비만 (DEF-001 Fixed) | TP-P2-07 |
 | 25.000001 | 비만 | 비만 | 비만 | 비만 | TP-P2-08 |
 
 ### 5.2 연령 구간 경계
@@ -426,25 +426,26 @@ genhtml coverage.filtered.info --output-directory build/coverage_html
 
 ---
 
-## 12. [예약] `docs/defect_list.md` 결함 재발 방지 TC 매핑
+## 12. `docs/defect_list.md` 결함 재발 방지 TC 매핑
 
-> **6단계(결함 분석) 완료 후** `defect_list.md`의 `DEF-xxx` 항목을 아래 표에 채운다. 5단계 마무리 전 최소 1회 동기화.
+> **4단계(결함 분석) 완료** — `docs/defect_list.md` DEF-001~008과 동기화.
 
 | DEF-ID | 결함 요약 | 코드 근거 | 재발 방지 TC | 우선순위 | 상태 |
 |--------|-----------|-----------|--------------|----------|------|
-| DEF-___ | BMI=25 미분류 | `classifyBmiCategory` L44 `> 25` | **TP-P2-07**, **TP-P3-11**, **EX-04** | P2 | 예약 |
-| DEF-___ | sum=0 0 나누기 | `computeAgeCohortRatios` L125 | **TP-P3-10**, **EX-01** | P3 | 예약 |
-| DEF-___ | 전원 weight=0 | `imputeMissingWeights` L96 | **TP-P1-04**, **EX-02** | P1 | 예약 |
-| DEF-___ | height=0 | `computeBmi` | **TP-P0-06**, **EX-03** | P1 | 예약 |
-| DEF-___ | 빈 줄 조기 break | `loadFromCsv` L66-68 | **TP-P3-18** | P3 | 예약 |
-| DEF-___ | calculateBmi 실패 잔존 상태 | `calculateBmi` | **EX-06** | P3 | 예약 |
-| DEF-___ | count 상한 미검사 | `loadFromCsv` L72 | (TC 예약) | Out | 예약 |
+| DEF-001 | BMI=25 미분류 (구 `>25`) | `classifyBmiCategory` else 비만 | **TP-P2-07**, **TP-P3-11**, **EX-04** | P2 | Green |
+| DEF-002 | sum=0 0 나누기 | `computeAgeCohortRatios` `sum==0` | **TP-P3-10**, **EX-01** | P3 | Green |
+| DEF-003 | 전원 weight=0 | `imputeMissingWeights` `ageCount==0` | **TP-P1-04**, **EX-02** | P1 | Green |
+| DEF-004 | calculateBmi 실패 잔존 | `calculateBmi` `cohortRatios_.fill` | **EX-06** | P3 | Green |
+| DEF-005 | height=0 미보정 | `computeBmi` (7단계) | **TP-P1-07**, **TP-P1-08**, **TP-P0-06** | P1 | Deferred |
+| DEF-006 | 빈 줄 조기 break | `loadFromCsv` `continue` | **TP-P3-18** | P3 | Green |
+| DEF-007 | count 상한 미검사 | `loadFromCsv` `count>=kMaxRecords` | (TC 예약, Out) | Out | Fixed |
+| DEF-008 | CSV parse 예외 | `loadFromCsv` try/catch | **TP-P3-17** | P3 | Green |
 
 **동기화 절차**
 
-1. **6단계**에서 `docs/defect_list.md` 작성 (`DEF-001` 형식).
-2. 각 DEF에 본 표 **재발 방지 TC** 열을 링크.
-3. 결함 수정 PR = 해당 TC Red → Green + baseline 갱신 여부 명시.
+1. `docs/defect_list.md`에 신규 DEF 추가·상태 갱신.
+2. 본 표 **재발 방지 TC** 열을 `SHealthBMITest.cpp` 테스트명과 일치시킨다.
+3. 결함 수정 시 해당 TC Red → Green; `shealth.dat` baseline 변동 시 `refactor_baseline_output.txt` 갱신.
 
 ---
 
@@ -455,7 +456,7 @@ genhtml coverage.filtered.info --output-directory build/coverage_html
 | 결과 | 의미 |
 |------|------|
 | `> 0` | 로드 레코드 수 `count` |
-| `0` | 파일 열기 실패 또는 0건 |
+| `0` | 파일 열기 실패, 파싱 실패, 또는 0건 |
 
 ### 13.2 `getBmiRatio(ageClass, type)`
 
@@ -470,4 +471,4 @@ genhtml coverage.filtered.info --output-directory build/coverage_html
 
 ---
 
-*문서 버전: 1.1 | 워크플로우 **4단계** | 다음: **5단계** TDD Green | 후속: `defect_list.md`(6단계), `refactoring_plan.md`(5단계) — 기준: `prompt_리펙토링 우선 진행(수정).md`*
+*문서 버전: 1.2 | 워크플로우 **4·5단계** | `defect_list.md` 동기화 완료 | 후속: 7단계 DEF-005(height), `refactoring_plan.md`*

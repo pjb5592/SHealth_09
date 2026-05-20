@@ -343,6 +343,25 @@ TEST_F(SHealthFixture, GetBmiRatio_Bmi25CountedAsObesity) {
     EXPECT_NEAR(health_->getBmiRatio(20, 400), 100.0, kRatioEpsilon);
 }
 
+// TP-P3-18: 헤더 후 빈 줄 — 이후 데이터 로드 유지 (DEF-006)
+TEST_F(SHealthFixture, CalculateBmi_BlankLineAfterHeader_LoadsFollowingRows) {
+    // Given: 헤더 다음 빈 줄, 유효 데이터 2행
+    // When: calculateBmi 실행
+    // Then: 2건 로드, 20대 비율 합산 가능
+    ASSERT_EQ(LoadFixture("csv_blank_line_after_header.csv"), 2);
+    const double sum = health_->getBmiRatio(20, 100) + health_->getBmiRatio(20, 200) +
+                       health_->getBmiRatio(20, 300) + health_->getBmiRatio(20, 400);
+    EXPECT_NEAR(sum, 100.0, kRatioSumEpsilon);
+}
+
+// TP-P3-17: 잘못된 CSV 숫자 필드 — calculateBmi 0 반환 (DEF-008)
+TEST_F(SHealthFixture, CalculateBmi_BadParse_ReturnsZero) {
+    // Given: age 필드가 숫자가 아닌 CSV
+    // When: calculateBmi 호출
+    // Then: 0 반환, 크래시 없음
+    EXPECT_EQ(LoadFixture("bad_parse.csv"), 0);
+}
+
 // TP-P3-15: 파일 미존재 → calculateBmi 0 반환 (EX-05, TC-28)
 TEST_F(SHealthFixture, CalculateBmi_MissingFile_ReturnsZero) {
     // Given: 존재하지 않는 파일

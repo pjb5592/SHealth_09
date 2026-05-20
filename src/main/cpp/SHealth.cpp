@@ -61,11 +61,21 @@ bool SHealth::loadFromCsv(const std::string& filename) {
     while (std::getline(file, line)) {
         const std::vector<std::string> tokens = split(line, ',');
         if (tokens.empty()) {
+            continue;
+        }
+        if (count >= kMaxRecords) {
             break;
         }
-        ages[count] = std::stoi(tokens[1]);
-        weights[count] = std::stod(tokens[2]);
-        heights[count] = std::stod(tokens[3]);
+        if (tokens.size() < 4) {
+            return false;
+        }
+        try {
+            ages[count] = std::stoi(tokens[1]);
+            weights[count] = std::stod(tokens[2]);
+            heights[count] = std::stod(tokens[3]);
+        } catch (const std::exception&) {
+            return false;
+        }
         count++;
     }
     return true;

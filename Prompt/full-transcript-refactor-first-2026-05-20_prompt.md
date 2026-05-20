@@ -15,7 +15,7 @@
 | 3 | clean-refactor | ✅ 완료 | `src/main/cpp/SHealth.*`, `docs/refactor_baseline_output.txt` |
 | 4 | test-plan | ✅ 완료 | `docs/test_plan.md` |
 | 5 | tdd-implementation | ✅ 완료 | `SHealthBMITest` 35 TC Green, `src/test/fixtures/` |
-| 6 | defect-analysis | ⬜ 대기 | `docs/defect_list.md` |
+| 6 | defect-analysis | ✅ 완료 | `docs/defect_list.md`, `loadFromCsv` 보강, 37 TC Green |
 | 7 | feature-enhancement | ⬜ 대기 | 기능 diff |
 | 8 | refactoring-roadmap | ⬜ 대기 | `docs/refactoring_plan.md` |
 | 9 | golden-master | ⬜ 대기 | Golden 회귀 |
@@ -169,4 +169,28 @@ Report·Prompt·full-transcript 생성·갱신. TDD 코드·픽스처 포함 git
 
 ---
 
-*마지막 갱신: 2026-05-20 — 수정 워크플로우 기준 단계 5(TDD) 완료*
+## 단계 6 — defect-analysis
+
+**User (요약)**  
+C++ QA 역할로 README·요구사항 대비 결함 분석. BMI/연령/0 나눗셈 경계, `docs/defect_list.md`(DEF-001~), 명확한 버그 최소 수정, `test_plan` §12 TC 매핑. ctest Green.
+
+**Assistant (요약)**  
+DEF-001~004는 5단계 TDD에서 이미 수정·Green. `defect_list.md` 작성(DEF-001~008). `loadFromCsv` DEF-006~008(빈 줄 continue, count 상한, parse 예외). TP-P3-17/18 추가. height=0(DEF-005)는 7단계 Deferred. `ctest` 37/37 Green, baseline 일치.
+
+**산출물:** `docs/defect_list.md`, `docs/test_plan.md`, `SHealth.cpp`, `SHealthBMITest.cpp`, 픽스처 2종  
+**Report:** `Report/06.defect-analysis-report-2026-05-20.md`  
+**Transcript:** `Prompt/06.defect-analysis-transcript-2026-05-20_prompt.md`
+
+---
+
+## 단계 6 후처리 — 문서·배포
+
+**User (요약)**  
+6단계 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
+
+**Assistant (요약)**  
+Report·Prompt·full-transcript 생성·갱신. git 커밋·푸시.
+
+---
+
+*마지막 갱신: 2026-05-20 — 수정 워크플로우 기준 단계 6(결함 분석·수정) 완료*
