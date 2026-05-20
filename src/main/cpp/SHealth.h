@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "BmiDomain.h"
+
 class SHealthTestPeer;
 
 struct PersonRecord {
@@ -17,12 +19,7 @@ struct PersonRecord {
 class SHealth {
     friend class SHealthTestPeer;
 public:
-    enum class BmiCategoryType : int {
-        Underweight = 100,
-        Normal = 200,
-        Overweight = 300,
-        Obesity = 400,
-    };
+    using BmiCategoryType = shealth::domain::BmiCategoryType;
 
     int calculateBmi(const std::string& filename);
     double getBmiRatio(int ageClass, int type) const;
@@ -31,28 +28,10 @@ public:
 
 private:
     static constexpr int kMaxRecords = 10000;
-    static constexpr int kAgeClassMin = 20;
-    static constexpr int kAgeClassMax = 70;
-    static constexpr int kAgeClassStep = 10;
-    static constexpr int kAgeCohortCount =
-        (kAgeClassMax - kAgeClassMin) / kAgeClassStep + 1;
-    static constexpr int kBmiCategoryCount = 4;
+    static constexpr int kAgeCohortCount = shealth::domain::kAgeCohortCount;
+    static constexpr int kBmiCategoryCount = shealth::domain::kBmiCategoryCount;
 
-    static constexpr double kBmiUnderweightMax = 18.5;
-    static constexpr double kBmiNormalUpperExclusive = 23.0;
-    static constexpr double kBmiOverweightMin = 23.0;
-    static constexpr double kBmiOverweightMaxExclusive = 25.0;
-    static constexpr double kBmiObesityMinExclusive = 25.0;
-
-    static constexpr double kCmPerMeter = 100.0;
-    static constexpr double kPercentScale = 100.0;
-
-    enum class BmiCategoryIndex : int {
-        Underweight = 0,
-        Normal = 1,
-        Overweight = 2,
-        Obesity = 3,
-    };
+    using BmiCategoryIndex = shealth::domain::BmiCategoryIndex;
 
     std::vector<PersonRecord> records_;
 

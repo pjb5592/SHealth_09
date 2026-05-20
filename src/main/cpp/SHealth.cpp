@@ -7,74 +7,7 @@
 namespace shealth {
 namespace detail {
 
-namespace bmi {
-
-constexpr int kAgeClassMin = 20;
-constexpr int kAgeClassMax = 70;
-constexpr int kAgeClassStep = 10;
-constexpr int kAgeCohortCount = 6;
-constexpr int kBmiCategoryCount = 4;
-constexpr double kCmPerMeter = 100.0;
-constexpr double kBmiUnderweightMax = 18.5;
-constexpr double kBmiNormalUpperExclusive = 23.0;
-constexpr double kBmiOverweightMaxExclusive = 25.0;
-
-constexpr int kTypeUnderweight = 100;
-constexpr int kTypeNormal = 200;
-constexpr int kTypeOverweight = 300;
-constexpr int kTypeObesity = 400;
-
-constexpr int kIdxUnderweight = 0;
-constexpr int kIdxNormal = 1;
-constexpr int kIdxOverweight = 2;
-constexpr int kIdxObesity = 3;
-
-bool isInAgeCohort(int age, int ageClass) {
-    return age >= ageClass && age < ageClass + kAgeClassStep;
-}
-
-int ageClassToCohortIndex(int ageClass) {
-    if (ageClass < kAgeClassMin || ageClass > kAgeClassMax ||
-        (ageClass - kAgeClassMin) % kAgeClassStep != 0) {
-        return -1;
-    }
-    return (ageClass - kAgeClassMin) / kAgeClassStep;
-}
-
-int typeToCategoryIndex(int type) {
-    switch (type) {
-        case kTypeUnderweight:
-            return kIdxUnderweight;
-        case kTypeNormal:
-            return kIdxNormal;
-        case kTypeOverweight:
-            return kIdxOverweight;
-        case kTypeObesity:
-            return kIdxObesity;
-        default:
-            return -1;
-    }
-}
-
-int classifyBmiCategory(double bmi) {
-    if (bmi <= kBmiUnderweightMax) {
-        return kIdxUnderweight;
-    }
-    if (bmi < kBmiNormalUpperExclusive) {
-        return kIdxNormal;
-    }
-    if (bmi < kBmiOverweightMaxExclusive) {
-        return kIdxOverweight;
-    }
-    return kIdxObesity;
-}
-
-double computeBmi(double weightKg, double heightCm) {
-    const double heightM = heightCm / kCmPerMeter;
-    return weightKg / (heightM * heightM);
-}
-
-}  // namespace bmi
+namespace domain = shealth::domain;
 
 namespace csv {
 
@@ -133,12 +66,11 @@ void fillCohortAverage(std::vector<PersonRecord>& records,
                        double PersonRecord::*field,
                        bool (*isMissing)(double)) {
     const std::size_t count = records.size();
-    for (int ageClass = bmi::kAgeClassMin; ageClass <= bmi::kAgeClassMax;
-         ageClass += bmi::kAgeClassStep) {
+    for (const domain::AgeCohortDescriptor& cohort : domain::kAgeCohorts) {
         double sum = 0;
         int validCount = 0;
         for (std::size_t i = 0; i < count; i++) {
-            if (!bmi::isInAgeCohort(records[i].age, ageClass)) {
+            if (!domain::isAgeInCohort(records[i].age, cohort)) {
                 continue;
             }
             const double value = records[i].*field;
@@ -153,7 +85,7 @@ void fillCohortAverage(std::vector<PersonRecord>& records,
         }
         const double average = sum / validCount;
         for (std::size_t i = 0; i < count; i++) {
-            if (!bmi::isInAgeCohort(records[i].age, ageClass)) {
+            if (!domain::isAgeInCohort(records[i].age, cohort)) {
                 continue;
             }
             if (isMissing(records[i].*field)) {
@@ -177,58 +109,58 @@ void fillHeightZeros(std::vector<PersonRecord>& records) {
 
 namespace stats {
 
-constexpr double kPercentScale = 100.0;
-
 void computeAgeCohortRatios(
     const std::vector<PersonRecord>& records,
-    std::array<std::array<double, bmi::kBmiCategoryCount>, bmi::kAgeCohortCount>& cohortRatios) {
+    std::array<std::array<double, domain::kBmiCategoryCount>, domain::kAgeCohortCount>&
+        cohortRatios) {
     const std::size_t count = records.size();
-    for (int ageClass = bmi::kAgeClassMin; ageClass <= bmi::kAgeClassMax;
-         ageClass += bmi::kAgeClassStep) {
-        int categoryCounts[bmi::kBmiCategoryCount] = {0, 0, 0, 0};
+    for (const domain::AgeCohortDescriptor& cohort : domain::kAgeCohorts) {
+        int categoryCounts[domain::kBmiCategoryCount] = {0, 0, 0, 0};
         int sum = 0;
         for (std::size_t i = 0; i < count; i++) {
-            if (!bmi::isInAgeCohort(records[i].age, ageClass)) {
+            if (!domain::isAgeInCohort(records[i].age, cohort)) {
                 continue;
             }
             sum++;
-            const int category = bmi::classifyBmiCategory(records[i].bmi);
+            const int category = domain::classifyBmiCategory(records[i].bmi);
             if (category >= 0) {
                 categoryCounts[category]++;
             }
         }
-        const int cohortIndex = bmi::ageClassToCohortIndex(ageClass);
+        const int cohortIndex = cohort.cohortIndex;
         if (sum == 0) {
-            for (int category = 0; category < bmi::kBmiCategoryCount; category++) {
-                cohortRatios[cohortIndex][category] = 0.0;
+            for (const domain::BmiCategoryDescriptor& category : domain::kBmiCategories) {
+                cohortRatios[cohortIndex][static_cast<int>(category.storageIndex)] = 0.0;
             }
             continue;
         }
-        for (int category = 0; category < bmi::kBmiCategoryCount; category++) {
-            cohortRatios[cohortIndex][category] =
-                static_cast<double>(categoryCounts[category]) * kPercentScale / sum;
+        for (const domain::BmiCategoryDescriptor& category : domain::kBmiCategories) {
+            const int storageIndex = static_cast<int>(category.storageIndex);
+            cohortRatios[cohortIndex][storageIndex] =
+                static_cast<double>(categoryCounts[storageIndex]) * domain::kPercentScale / sum;
         }
     }
 }
 
-void computeOverallRatios(const std::vector<PersonRecord>& records,
-                          std::array<double, bmi::kBmiCategoryCount>& overallRatios) {
-    int categoryCounts[bmi::kBmiCategoryCount] = {0, 0, 0, 0};
+void computeOverallRatios(
+    const std::vector<PersonRecord>& records,
+    std::array<double, domain::kBmiCategoryCount>& overallRatios) {
+    int categoryCounts[domain::kBmiCategoryCount] = {0, 0, 0, 0};
     const std::size_t count = records.size();
     if (count == 0) {
         overallRatios.fill(0.0);
         return;
     }
     for (std::size_t i = 0; i < count; i++) {
-        const int category = bmi::classifyBmiCategory(records[i].bmi);
+        const int category = domain::classifyBmiCategory(records[i].bmi);
         if (category >= 0) {
             categoryCounts[category]++;
         }
     }
-    for (int category = 0; category < bmi::kBmiCategoryCount; category++) {
-        overallRatios[category] =
-            static_cast<double>(categoryCounts[category]) * kPercentScale /
-            static_cast<double>(count);
+    for (const domain::BmiCategoryDescriptor& category : domain::kBmiCategories) {
+        const int storageIndex = static_cast<int>(category.storageIndex);
+        overallRatios[storageIndex] = static_cast<double>(categoryCounts[storageIndex]) *
+                                        domain::kPercentScale / static_cast<double>(count);
     }
 }
 
@@ -238,23 +170,23 @@ void computeOverallRatios(const std::vector<PersonRecord>& records,
 }  // namespace shealth
 
 bool SHealth::isInAgeCohort(int age, int ageClass) {
-    return shealth::detail::bmi::isInAgeCohort(age, ageClass);
+    return shealth::domain::isInAgeCohort(age, ageClass);
 }
 
 int SHealth::ageClassToCohortIndex(int ageClass) {
-    return shealth::detail::bmi::ageClassToCohortIndex(ageClass);
+    return shealth::domain::ageClassToCohortIndex(ageClass);
 }
 
 int SHealth::typeToCategoryIndex(int type) {
-    return shealth::detail::bmi::typeToCategoryIndex(type);
+    return shealth::domain::typeToCategoryIndex(type);
 }
 
 int SHealth::classifyBmiCategory(double bmi) {
-    return shealth::detail::bmi::classifyBmiCategory(bmi);
+    return shealth::domain::classifyBmiCategory(bmi);
 }
 
 double SHealth::computeBmi(double weightKg, double heightCm) {
-    return shealth::detail::bmi::computeBmi(weightKg, heightCm);
+    return shealth::domain::computeBmi(weightKg, heightCm);
 }
 
 bool SHealth::loadFromCsv(const std::string& filename) {

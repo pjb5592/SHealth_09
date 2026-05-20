@@ -276,9 +276,9 @@ ctest
 
 ### 체크리스트
 
-- [ ] 연령대 6·범주 4 메타데이터가 **배열 1곳**에만 존재
-- [ ] `classifyBmiCategory` 분기 조건 **수치 변경 없음**
-- [ ] **47/47** Green
+- [x] 연령대 6·범주 4 메타데이터가 **배열 1곳**에만 존재 (`BmiDomain.h`, 2026-05-20)
+- [x] `classifyBmiCategory` 분기 조건 **수치 변경 없음**
+- [x] **47/47** Green
 
 ---
 
@@ -526,7 +526,7 @@ ctest
 |-------|----------|-------|-----------|
 | 0 | [x] | 47/47 | baseline·브랜치·태그 `phase-0-baseline` (2026-05-20) |
 | 1 | [x] | 47/47 | `vector<PersonRecord>` (2026-05-20) |
-| 2 | [ ] | 47/47 | cohort/category 테이블 |
+| 2 | [x] | 47/47 | cohort/category 테이블 (`BmiDomain.h`, 2026-05-20) |
 | 3 | [ ] | 47/47 | type lookup 테이블 |
 | 4 | [ ] | 47/47 | 헤더/cpp 분리 |
 | 5 | [ ] | 47/47 | `istream` 로더 |
