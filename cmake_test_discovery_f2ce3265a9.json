@@ -1,0 +1,304 @@
+{
+  "tests": 56,
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "SHealthBMITest",
+      "tests": 18,
+      "testsuite": [
+        {
+          "name": "ComputeBmi_StandardWeightHeight_ReturnsNear2422",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 132
+        },
+        {
+          "name": "ComputeBmi_CmToMeterConversion_ReturnsNear2469",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 141
+        },
+        {
+          "name": "ComputeBmi_ReadmeLikeDecimals_ReturnsExpected",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 150
+        },
+        {
+          "name": "ComputeBmi_UnderweightRange_ReturnsNear1730",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 160
+        },
+        {
+          "name": "ComputeBmi_TallHeight_ReturnsFinitePositive",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 169
+        },
+        {
+          "name": "ClassifyBmi_17_ReturnsUnderweight",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 188
+        },
+        {
+          "name": "ClassifyBmi_18_5_ReturnsUnderweight",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 196
+        },
+        {
+          "name": "ClassifyBmi_18_500001_ReturnsNormal",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 204
+        },
+        {
+          "name": "ClassifyBmi_22_999_ReturnsNormal",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 212
+        },
+        {
+          "name": "ClassifyBmi_23_ReturnsOverweight",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 220
+        },
+        {
+          "name": "ClassifyBmi_24_999_ReturnsOverweight",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 228
+        },
+        {
+          "name": "ClassifyBmi_25_ReturnsObesity",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 236
+        },
+        {
+          "name": "ClassifyBmi_30_ReturnsObesity",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 244
+        },
+        {
+          "name": "IsInAgeCohort_Age20In20s_ReturnsTrue",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 319
+        },
+        {
+          "name": "IsInAgeCohort_Age29In20s_ReturnsTrue",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 327
+        },
+        {
+          "name": "IsInAgeCohort_Age30_NotIn20s_In30s",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 335
+        },
+        {
+          "name": "IsInAgeCohort_Age19_NotIn20s",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 344
+        },
+        {
+          "name": "IsInAgeCohort_Age79_In70s",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 352
+        }
+      ]
+    },
+    {
+      "name": "SHealthFixture",
+      "tests": 35,
+      "testsuite": [
+        {
+          "name": "ImputeWeight_SingleZeroIn20s_ReplacesWith60",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 254
+        },
+        {
+          "name": "ImputeWeight_MultiZeroIn30s_ReplacesWith90",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 263
+        },
+        {
+          "name": "ImputeWeight_CrossCohort_DoesNotMixAverages",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 272
+        },
+        {
+          "name": "ImputeWeight_AllZeroInCohort_LeavesZeroNoCrash",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 281
+        },
+        {
+          "name": "ImputeWeight_Age19Zero_Uses20sCohortOnly",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 292
+        },
+        {
+          "name": "CalculateBmi_RealDataWeightZero_DoesNotCrash",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 301
+        },
+        {
+          "name": "GetBmiRatio_FourCategoriesEach25Percent",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 360
+        },
+        {
+          "name": "GetBmiRatio_Underweight2Of10_Returns20",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 377
+        },
+        {
+          "name": "GetBmiRatio_InvalidType_ReturnsZero",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 386
+        },
+        {
+          "name": "GetBmiRatio_InvalidAgeClass_ReturnsZero",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 395
+        },
+        {
+          "name": "GetBmiRatio_EmptyCohort_ReturnsZeroNoDivideByZero",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 404
+        },
+        {
+          "name": "GetBmiRatio_Bmi25CountedAsObesity",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 414
+        },
+        {
+          "name": "CalculateBmi_BlankLineAfterHeader_LoadsFollowingRows",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 423
+        },
+        {
+          "name": "CalculateBmi_TooFewColumns_ReturnsZero",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 434
+        },
+        {
+          "name": "Report_Format_WithoutCalculateBmi_ReturnsZeroLines",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 467
+        },
+        {
+          "name": "Report_Format_AfterFixture_MatchesGetBmiRatio",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 473
+        },
+        {
+          "name": "CalculateBmi_BadParse_ReturnsZero",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 481
+        },
+        {
+          "name": "CalculateBmi_MissingFile_ReturnsZero",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 489
+        },
+        {
+          "name": "GetBmiRatio_WithoutCalculateBmi_ReturnsZero",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 497
+        },
+        {
+          "name": "CalculateBmi_TwiceSameFile_IdempotentRatios",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 505
+        },
+        {
+          "name": "CalculateBmi_FailedLoad_ClearsPreviousRatios",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 517
+        },
+        {
+          "name": "GoldenMaster_ShealthDat_ReportMatchesApprovedFile",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 530
+        },
+        {
+          "name": "GoldenMaster_ShealthDat_GetBmiRatiosMatchApprovedFile",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 547
+        },
+        {
+          "name": "ImputeHeight_SingleZeroIn40s_ReplacesWith170",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 572
+        },
+        {
+          "name": "ImputeHeight_AllZeroInCohort_LeavesZeroNoCrash",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 581
+        },
+        {
+          "name": "CalculateBmi_HeightZeroAfterImpute_ReturnsFiniteBmi",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 591
+        },
+        {
+          "name": "GetNormalBmiUserIds_Mixed_ReturnsNormalOnly",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 604
+        },
+        {
+          "name": "GetNormalBmiUserIds_AllObese_ReturnsEmpty",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 616
+        },
+        {
+          "name": "GetNormalBmiUserIds_Boundaries_ExcludesEdgeBmis",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 625
+        },
+        {
+          "name": "GetNormalBmiUserIds_WithoutCalculateBmi_ReturnsEmpty",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 637
+        },
+        {
+          "name": "GetOverallBmiRatio_FourCategoriesEach25Percent",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 647
+        },
+        {
+          "name": "GetOverallBmiRatio_EmptyData_ReturnsZero",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 664
+        },
+        {
+          "name": "GetOverallBmiRatio_InvalidType_ReturnsZero",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 674
+        },
+        {
+          "name": "CalculateBmi_ExceedsMaxRecords_CapsAtLimit",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 680
+        },
+        {
+          "name": "CalculateBmi_ShealthDat_RecordCountWithinCap",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 698
+        }
+      ]
+    },
+    {
+      "name": "CsvLoaderTest",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "LoadFromStream_FailBit_ReturnsFalse",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 442
+        },
+        {
+          "name": "LoadFromStream_MaxRecordsZero_LoadsNoRows",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 451
+        },
+        {
+          "name": "Split_CommaSeparated_ReturnsFourTokens",
+          "file": "D:\/DEV\/SHealth_09\/src\/test\/cpp\/SHealthBMITest.cpp",
+          "line": 459
+        }
+      ]
+    }
+  ]
+}
