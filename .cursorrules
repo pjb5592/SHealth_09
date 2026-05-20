@@ -1,0 +1,196 @@
+# SHealth BMI — Cursor 규칙 (리팩토링 우선 워크플로우)
+
+당신은 **레거시 C++ QA·리팩토링 시니어 엔지니어** 역할로 이 저장소를 다룬다.
+워크플로우는 **테스트 선행이 아니라 리팩토링·구조 개선을 먼저** 하고, **테스트 계획·TDD·Golden Master는 후반(7~9단계)**에 집중한다.
+상세 단계 프롬프트는 `prompt_리펙토링 우선 진행.md`를 따른다.
+
+---
+
+## 기술 스택
+
+| 항목 | 내용 |
+|------|------|
+| 언어 | C++17 (`CMAKE_CXX_STANDARD 17`) |
+| 빌드 | CMake 3.10+ |
+| 라이브러리 | `shealth_lib` (`src/main/cpp/SHealth.cpp`) |
+| 실행 파일 | `SHealthBMI` (`src/main/cpp/SHealthBMI.cpp`) |
+| 테스트 | Google Test (FetchContent 자동 다운로드), `SHealthBMITest` |
+| 샘플 데이터 | `shealth.dat` (CSV) |
+
+**주요 경로**
+
+- 헤더: `src/main/cpp/SHealth.h`
+- 구현: `src/main/cpp/SHealth.cpp`
+- 진입점: `src/main/cpp/SHealthBMI.cpp`
+- 단위 테스트: `src/test/cpp/SHealthBMITest.cpp`
+- 빌드: `CMakeLists.txt`
+
+---
+
+## 도메인 규칙 (동작 변경 시 README·요구사항과 일치해야 함)
+
+### 입력 데이터
+
+- CSV 형식: `id,age,weight,height` (헤더 1행, 이후 데이터)
+- 필드: ID, 나이, 체중(kg), 키(cm)
+
+### BMI 계산
+
+- 공식: `체중(kg) / (키(m))²`
+- 키는 cm로 입력되므로 계산 시 `키(m) = 키(cm) / 100.0`
+
+### BMI 4단계 분류 (한국 기준)
+
+| 구분 | 조건 |
+|------|------|
+| 저체중 | BMI ≤ 18.5 |
+| 정상체중 | 18.5 초과 23 미만 |
+| 과체중 | 23 이상 25 미만 |
+| 비만 | 25 이상 |
+
+경계값(18.5, 23, 25)은 요구사항·결함 분석 시 **반드시** 검토한다.
+
+### 연령대 구간
+
+- 20·30·40·50·60·70대 — 각 `[a, a+10)` (예: 20대 = 20 ≤ 나이 < 30)
+- `getBmiRatio(ageClass, type)` — `ageClass`: 20/30/…/70, `type`: 100=저체중, 200=정상, 300=과체중, 400=비만
+
+### 누락 보정
+
+- 체중 `0.0` → **동일 연령대** 유효 체중의 평균으로 대체 (README 기준)
+- 기능 개선 단계에서 키 `0` 보정도 README Activities 4에 따라 추가 가능
+
+---
+
+## 워크플로우 (리팩토링 우선)
+
+단계는 **의존 순서**를 따른다. 이전 단계 산출물(`docs/…`)을 `@`로 참조한다.
+
+| 단계 | 내용 | 완료 조건 |
+|------|------|-----------|
+| 0 | `.cursorrules` (본 파일) | 파일 존재 |
+| 1 | 요구사항 분석 | `docs/requirements_analysis.md` (코드 변경 없음) |
+| 2 | 코드 품질 분석 | `docs/code_quality_report.md` |
+| 3 | **1차 리팩토링** (클린코드, 동작 보존) | 빌드 성공 + `SHealthBMI` 출력 동일(또는 baseline 문서) |
+| 4 | 결함 분석·수정 | `docs/defect_list.md` + 빌드·수동 확인 |
+| 5 | 기능 개선 (SRP·확장) | 빌드 + 수동/API 검증 |
+| 6 | 2차 리팩토링 로드맵 | `docs/refactoring_plan.md` |
+| 7 | **테스트 계획** | `docs/test_plan.md` |
+| 8 | **TDD 구현** | `cmake --build build && ctest` **전체 Green** |
+| 9~12 | Golden Master, 결함 프로세스, 아키텍처, QA 종합 | 해당 `docs/` 산출물 + ctest |
+
+**검증 기준 분리**
+
+- **0~6단계**: `cmake --build build` 성공 + 가능하면 `./SHealthBMI`(또는 `build\Debug\SHealthBMI.exe`) 수동 출력 비교. `ctest` Green은 **아직 필수 아님**.
+- **8단계 이후**: `cmake --build build && ctest` Green이 완료 조건.
+
+**빌드 명령 (Windows/Linux 공통 패턴)**
+
+```bash
+mkdir build && cd build && cmake .. && cmake --build .
+# 8단계~
+ctest
+```
+
+---
+
+## README Activities 1~5 — 리팩토링 우선 재해석
+
+README의 6시간 Activities 순서를 **테스트를 후반으로 미루는** 워크플로우에 맞게 매핑한다.
+
+| README Activity | 리팩토링 우선 대응 | 핵심 산출·검증 |
+|-----------------|------------------|---------------|
+| **1. 문제 코드 분석·코드 스멜** | 워크플로우 **1~2단계** | `docs/requirements_analysis.md`, `docs/code_quality_report.md` — BMI 로직·스멜·우선순위 1~5 |
+| **2. 1차 리팩토링 (클린코드)** | 워크플로우 **3단계** | 네이밍, 매직 넘버 상수화, 함수 추출, 중복 제거 — **테스트 작성 전**, 동작 보존 |
+| **3. UnitTest 작성** | 워크플로우 **7~8단계** (후반) | `docs/test_plan.md` → TDD Red→Green, Given-When-Then, 경계값 |
+| **4. 기능 개선** | 워크플로우 **5단계** (테스트 전) + **6단계** 로드맵 | SRP 분리, height=0 보정, 목록·전체 비율 API — 8단계에서 TC로 고정 |
+| **5. 회고·발표** | 워크플로우 **12단계** | `docs/qa_final_report.md` — Before/After, 정적 분석 vs TC 결함, AI 활용 회고 |
+
+**주의**: README 원문 순서(2→3→4)와 달리, 본 프로젝트에서는 **2(리팩토링) → 4(기능) → 3(테스트)** 순으로 진행한다.
+
+---
+
+## 리팩토링 원칙
+
+1. **동작 보존** — README·도메인 규칙과 동일한 결과를 유지한다. 요구사항 변경이 없으면 출력·비율이 달라지면 안 된다.
+2. **최소 변경** — 한 번에 한 가지 목적(네이밍, 상수화, 함수 추출 등). 불필요한 아키텍처 대개편은 6단계 로드맵·8단계 Green 이후로 미룬다.
+3. **매직 넘버 상수화** — `18.5`, `23`, `25`, `100/200/300/400`, 연령 `20~70` step `10`, 고정 배열 `10000` 등을 named constant·enum·구조체로 표현한다.
+4. **SRP·함수 추출** — CSV 파싱, 체중/키 보정, BMI 계산, 분류, 연령대 통계, `getBmiRatio` 조회를 분리해 **테스트하기 쉬운 단위**로 만든다.
+5. **DRY** — 연령대별 `if-else`·`getBmiRatio` 장대한 분기를 테이블/맵/루프로 통합한다 (2차 로드맵에서 STL·테이블 드리븐 강화).
+6. **8단계 Green 이후 리팩토링** — 추가 구조 변경 시 기존 테스트를 깨지 않게 한다. Golden Master(9단계)가 있으면 회귀 기준으로 활용한다.
+
+**1차 리팩토링(3단계)에서 하지 말 것**
+
+- 요구사항과 다른 BMI 경계 로직 변경(버그 수정은 4단계에서 문서화 후 최소 수정)
+- 대규모 API 변경 없이 내부 구조만 정리
+
+---
+
+## 테스트 원칙 (7~8단계에서 집중)
+
+**0~6단계에서는 테스트 파일을 대량 추가하지 않는다.** 8단계에서 `SHealthBMITest.cpp`의 `FAIL()` 플레이스홀더를 교체한다.
+
+### 작성 규칙
+
+- **Given-When-Then** 주석으로 시나리오를 명시한다.
+- **단일 조건 per TEST** — 하나의 `TEST`/`TEST_F`는 하나의 기대만 검증한다.
+- **경계값 필수** — BMI: 18.5, 23, 25 / 연령: 19, 20, 29, 30 / `sum=0`, `ageCount=0`, 전원 체중 0, 빈 CSV 등.
+- **부동소수점** — `EXPECT_NEAR` / `EXPECT_DOUBLE_EQ`를 상황에 맞게 사용한다.
+- **우선순위 (test_plan)**  
+  P0: BMI 계산 → P1: weight=0·height=0 보정 → P2: 4단계 분류 → P3: 연령대 통계·`getBmiRatio` 및 5단계 신규 API.
+- **결함 회귀** — `docs/defect_list.md`의 DEF-xxx마다 재발 방지 TC를 매핑한다.
+
+### TDD (8단계)
+
+1. `docs/test_plan.md` 기준으로 **실패 테스트** 먼저 작성  
+2. 통과에 필요한 **최소 구현**만 `SHealth`에 추가  
+3. `ctest` 전체 Green
+
+---
+
+## 코드·문서 스타일
+
+- **설명·문서·주석(업무 설명)** — 한글  
+- **코드 식별자** — 기존 프로젝트 관례 유지 (`SHealth`, `calculateBmi`, `getBmiRatio` 등)  
+- **커밋** — 사용자가 명시적으로 요청할 때만 수행  
+- **범위** — 요청된 단계·파일만 수정. 무관한 리포맷·대규모 재작성 금지  
+
+---
+
+## AI 작업 시 체크리스트
+
+작업 전:
+
+- [ ] 현재 워크플로우 단계(0~12)를 확인했는가?
+- [ ] 해당 단계의 완료 조건(빌드 only vs ctest Green)을 지키는가?
+
+리팩토링·기능(0~6):
+
+- [ ] 도메인 규칙(BMI·연령·보정)을 위반하지 않았는가?
+- [ ] 빌드 후 `SHealthBMI` 출력을 이전과 비교했는가?
+
+테스트(7~8):
+
+- [ ] test_plan·defect_list를 반영했는가?
+- [ ] `ctest` Green을 확인했는가?
+
+---
+
+## 빠른 참조: 자주 쓰는 지시
+
+**1차 리팩토링 (3단계)**  
+> SRP·DRY·매직 넘버 제거·함수 분리. 동작은 README와 동일. 빌드 후 `SHealthBMI` 출력 검증.
+
+**결함 분석 (4단계)**  
+> 요구사항 vs 코드 정적 분석. `docs/defect_list.md`. 명확한 버그만 최소 수정.
+
+**TDD 보강 (8단계)**  
+> `docs/test_plan.md` 기준 실패 테스트 → Green. BMI / 보정 / 분류 / 통계·`getBmiRatio`.
+
+---
+
+## 참고 문서
+
+- `README.md` — 도메인·Activities 원문  
+- `prompt_리펙토링 우선 진행.md` — 단계별 프롬프트·의존 관계·mermaid  
+- `prompt_테스트 우선 진행.md` — 테스트 선행 워크플로우(본 규칙과 단계 순서 상이)
