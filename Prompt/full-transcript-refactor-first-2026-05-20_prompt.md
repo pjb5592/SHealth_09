@@ -20,7 +20,7 @@
 | 8 | refactoring-roadmap | ✅ 완료 | `docs/refactoring_plan.md` (Phase 0~7) |
 | 8b | second-refactoring-execution | ✅ 완료 | Phase 0~7 코드·`refactor/phase-1-vector`·49 TC |
 | 9 | golden-master | ✅ 완료 | `test/golden/`, `SHealthBmiReport`, 50 TC Green |
-| 10 | defect-report | ⬜ 대기 | `docs/defect_report.md` |
+| 10 | defect-report | ✅ 완료 | `docs/defect_report.md` |
 | 11 | architecture | ⬜ 대기 | `docs/architecture.md` |
 | 12 | qa-final-report | ⬜ 대기 | `docs/qa_final_report.md` |
 
@@ -290,4 +290,28 @@ Report 10·Prompt 10·full-transcript 갱신. Golden Master 산출물 포함 git
 
 ---
 
-*마지막 갱신: 2026-05-20 — Golden Master 완료 (워크플로우 9, ctest 50/50, `feature`)*
+## 단계 10 — defect-report
+
+**User (요약)**  
+QA 리드 역할로 `defect_list`와 분리된 결함 관리 체계 문서 작성. Severity×ItemType(5종) 매트릭스, 보고 템플릿, 품질 메트릭(통과율·커버리지·6단계 정적 vs 5단계 TC 발견율), GitHub Issues 연동(선택) → `docs/defect_report.md`.
+
+**Assistant (요약)**  
+`docs/defect_report.md` v1.0 생성 — 프로세스·템플릿·메트릭·이슈 워크플로. DEF-001~008 발견율(정적 3 / TDD 5). ctest **50/50** 스냅샷. 코드 변경 없음.
+
+**산출물:** `docs/defect_report.md`  
+**Report:** `Report/11.defect-report-report-2026-05-20.md`  
+**Transcript:** `Prompt/11.defect-report-transcript-2026-05-20_prompt.md`
+
+---
+
+## 단계 10 후처리 — 문서·배포
+
+**User (요약)**  
+10단계(결함 관리 프로세스) 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
+
+**Assistant (요약)**  
+Report 11·Prompt 11·full-transcript 갱신. `docs/defect_report.md` 포함 git 커밋·푸시.
+
+---
+
+*마지막 갱신: 2026-05-20 — 결함 관리 프로세스 완료 (워크플로우 10, ctest 50/50, `feature`)*
