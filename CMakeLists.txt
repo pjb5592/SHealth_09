@@ -28,6 +28,10 @@ enable_testing()
 # Test executable
 add_executable(SHealthBMITest src/test/cpp/SHealthBMITest.cpp)
 target_link_libraries(SHealthBMITest PRIVATE shealth_lib GTest::gtest_main)
+target_compile_definitions(SHealthBMITest PRIVATE
+    SHEALTH_FIXTURE_DIR="${CMAKE_SOURCE_DIR}/src/test/fixtures"
+    SHEALTH_PROJECT_ROOT="${CMAKE_SOURCE_DIR}"
+)
 
 include(GoogleTest)
-gtest_discover_tests(SHealthBMITest)
+gtest_discover_tests(SHealthBMITest WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})

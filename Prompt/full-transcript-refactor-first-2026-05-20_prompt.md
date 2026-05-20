@@ -16,7 +16,7 @@
 | 5 | feature-enhancement | ⬜ 대기 | 기능 diff |
 | 6 | refactoring-roadmap | ⬜ 대기 | `docs/refactoring_plan.md` |
 | 7 | test-plan | ✅ 완료 | `docs/test_plan.md` |
-| 8 | tdd-implementation | ⬜ 대기 | 테스트 Green |
+| 8 | tdd-implementation | ✅ 완료 | `SHealthBMITest` 35 TC Green, `src/test/fixtures/` |
 | 9~12 | (선택·QA) | ⬜ 대기 | Golden, defect_report, architecture, qa_final_report |
 
 ---
@@ -126,8 +126,8 @@ Report·Prompt 3종 생성·갱신. git 커밋·푸시.
 `docs/test_plan.md` 생성. 리팩토링 후 private 단계·Friend/픽스처 전략, TP-P0~P3·§12 DEF 예약, requirements §8 TC 매핑. 8단계 TDD 입력 완료.
 
 **산출물:** `docs/test_plan.md`  
-**Report:** `Report/07.test-plan-report-2026-05-20.md`  
-**Transcript:** `Prompt/07.test-plan-transcript-2026-05-20_prompt.md`
+**Report:** `Report/04.test-plan-report-2026-05-20.md`  
+**Transcript:** `Prompt/04.test-plan-transcript-2026-05-20_prompt.md`
 
 ---
 
@@ -141,4 +141,28 @@ Report·Prompt 3종 생성·갱신. 빌드 통과·ctest 플레이스홀더 실�
 
 ---
 
-*마지막 갱신: 2026-05-20 — 단계 7 완료*
+## 단계 8 — tdd-implementation
+
+**User (요약)**  
+시니어 C++ QA 역할로 `docs/test_plan.md` 기준 TDD. `FAIL()` 제거, P0~P3 테스트 작성, 최소 `SHealth` 수정, Given-When-Then, `cmake --build build && ctest` Green.
+
+**Assistant (요약)**  
+35개 Google Test 작성(P0/P1/P2/P3). `SHealthTestPeer`·픽스처 CSV 8종. 결함 수정: BMI=25 비만, sum/ageCount 0 나누기 방어, `cohortRatios_` 초기화. `ctest` 35/35 Green, `SHealthBMI` baseline 일치. height=0·defect_list는 5·4단계 유보.
+
+**산출물:** `src/test/cpp/SHealthBMITest.cpp`, `src/test/fixtures/`, `SHealth.h/cpp`, `CMakeLists.txt`  
+**Report:** `Report/08.tdd-implementation-report-2026-05-20.md`  
+**Transcript:** `Prompt/08.tdd-implementation-transcript-2026-05-20_prompt.md`
+
+---
+
+## 단계 8 후처리 — 문서·배포
+
+**User (요약)**  
+8단계 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
+
+**Assistant (요약)**  
+Report·Prompt·full-transcript 생성·갱신. TDD 코드·픽스처 포함 git 커밋·푸시.
+
+---
+
+*마지막 갱신: 2026-05-20 — 단계 8 완료*

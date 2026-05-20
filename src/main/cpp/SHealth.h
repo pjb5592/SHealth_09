@@ -4,7 +4,10 @@
 #include <string>
 #include <vector>
 
+class SHealthTestPeer;
+
 class SHealth {
+    friend class SHealthTestPeer;
 public:
     enum class BmiCategoryType : int {
         Underweight = 100,

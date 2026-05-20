@@ -35,16 +35,13 @@ int SHealth::classifyBmiCategory(double bmi) {
     if (bmi <= kBmiUnderweightMax) {
         return static_cast<int>(BmiCategoryIndex::Underweight);
     }
-    if (bmi > kBmiUnderweightMax && bmi < kBmiNormalUpperExclusive) {
+    if (bmi < kBmiNormalUpperExclusive) {
         return static_cast<int>(BmiCategoryIndex::Normal);
     }
-    if (bmi >= kBmiOverweightMin && bmi < kBmiOverweightMaxExclusive) {
+    if (bmi < kBmiOverweightMaxExclusive) {
         return static_cast<int>(BmiCategoryIndex::Overweight);
     }
-    if (bmi > kBmiObesityMinExclusive) {
-        return static_cast<int>(BmiCategoryIndex::Obesity);
-    }
-    return -1;
+    return static_cast<int>(BmiCategoryIndex::Obesity);
 }
 
 double SHealth::computeBmi(double weightKg, double heightCm) {
@@ -88,6 +85,9 @@ void SHealth::imputeMissingWeights() {
             sum += weights[i];
             ageCount++;
         }
+        if (ageCount == 0) {
+            continue;
+        }
         for (int i = 0; i < count; i++) {
             if (!isInAgeCohort(ages[i], ageClass)) {
                 continue;
@@ -120,6 +120,12 @@ void SHealth::computeAgeCohortRatios() {
             }
         }
         const int cohortIndex = ageClassToCohortIndex(ageClass);
+        if (sum == 0) {
+            for (int category = 0; category < kBmiCategoryCount; category++) {
+                cohortRatios_[cohortIndex][category] = 0.0;
+            }
+            continue;
+        }
         for (int category = 0; category < kBmiCategoryCount; category++) {
             cohortRatios_[cohortIndex][category] =
                 static_cast<double>(categoryCounts[category]) * kPercentScale / sum;
@@ -129,6 +135,9 @@ void SHealth::computeAgeCohortRatios() {
 
 int SHealth::calculateBmi(const std::string& filename) {
     count = 0;
+    for (auto& cohort : cohortRatios_) {
+        cohort.fill(0.0);
+    }
     if (!loadFromCsv(filename)) {
         return 0;
     }
