@@ -15,7 +15,7 @@
 | 4 | defect-analysis | ⬜ 대기 | `docs/defect_list.md` |
 | 5 | feature-enhancement | ⬜ 대기 | 기능 diff |
 | 6 | refactoring-roadmap | ⬜ 대기 | `docs/refactoring_plan.md` |
-| 7 | test-plan | ⬜ 대기 | `docs/test_plan.md` |
+| 7 | test-plan | ✅ 완료 | `docs/test_plan.md` |
 | 8 | tdd-implementation | ⬜ 대기 | 테스트 Green |
 | 9~12 | (선택·QA) | ⬜ 대기 | Golden, defect_report, architecture, qa_final_report |
 
@@ -117,4 +117,28 @@ Report·Prompt 3종 생성·갱신. git 커밋·푸시.
 
 ---
 
-*마지막 갱신: 2026-05-20 — 단계 3 완료*
+## 단계 7 — test-plan
+
+**User (요약)**  
+시니어 QA 리드 역할로 1차 리팩토링 후 구조에 맞춘 테스트 계획. TDD 4영역(P0~P3), Activities 4 TC 초안, 경계값·예외·Fixture·커버리지 90%+, defect_list TC 매핑 예약 → `docs/test_plan.md`.
+
+**Assistant (요약)**  
+`docs/test_plan.md` 생성. 리팩토링 후 private 단계·Friend/픽스처 전략, TP-P0~P3·§12 DEF 예약, requirements §8 TC 매핑. 8단계 TDD 입력 완료.
+
+**산출물:** `docs/test_plan.md`  
+**Report:** `Report/07.test-plan-report-2026-05-20.md`  
+**Transcript:** `Prompt/07.test-plan-transcript-2026-05-20_prompt.md`
+
+---
+
+## 단계 7 후처리 — 문서·배포
+
+**User (요약)**  
+7단계 완료 후 Report / Prompt transcript / full-transcript 갱신 및 git add·commit·push.
+
+**Assistant (요약)**  
+Report·Prompt 3종 생성·갱신. 빌드 통과·ctest 플레이스홀더 실패(예상) 기록. git 커밋·푸시.
+
+---
+
+*마지막 갱신: 2026-05-20 — 단계 7 완료*
